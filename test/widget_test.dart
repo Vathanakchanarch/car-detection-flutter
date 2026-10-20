@@ -173,10 +173,18 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Pay 180,000 ៛'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Confirm demo'));
+    await tester.tap(find.text('Confirm & pay'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Processing payment...'), findsOneWidget);
+    expect(find.byKey(const Key('processing-payment-amount')), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 1500));
     await tester.pumpAndSettle();
 
-    expect(find.text('180,000 ៛ marked paid'), findsOneWidget);
+    expect(find.text('Payment successful'), findsOneWidget);
+    expect(find.byKey(const Key('success-payment-amount')), findsOneWidget);
     expect(demoStore.paidFineIds, containsAll(['speeding', 'helmet']));
   });
 

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_data.dart';
 import 'vehicle_detail_screen.dart';
 import 'widgets/app_components.dart';
@@ -8,9 +13,8 @@ class VehiclesScreen extends StatelessWidget {
   const VehiclesScreen({super.key});
 
   void _addVehicle(BuildContext context) {
-    showModalBottomSheet<void>(
+    showMobileBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       showDragHandle: true,
       builder: (sheetContext) {
         String type = 'Car';
@@ -26,28 +30,38 @@ class VehiclesScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Add a vehicle',
+                Text(
+                  context.l10n.addAVehicle,
                   style: TextStyle(
-                    color: ink,
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(context),
                     fontSize: 21,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 22),
+                SizedBox(height: 22),
                 Row(
                   children: [
                     Expanded(
                       child: ChoiceChip(
-                        label: const Text('🚙  Car'),
+                        avatar: Icon(
+                          Icons.directions_car_outlined,
+                          color: aicaBlue(context),
+                        ),
+                        label: Text(context.l10n.car),
                         selected: type == 'Car',
                         onSelected: (_) => setSheetState(() => type = 'Car'),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Expanded(
                       child: ChoiceChip(
-                        label: const Text('🏍  Motorcycle'),
+                        avatar: Icon(
+                          Icons.two_wheeler,
+                          color: aicaBlue(context),
+                        ),
+                        label: Text(context.l10n.motorcycle),
                         selected: type == 'Motorcycle',
                         onSelected: (_) =>
                             setSheetState(() => type = 'Motorcycle'),
@@ -55,31 +69,43 @@ class VehiclesScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Plate number',
-                  style: TextStyle(color: ink, fontWeight: FontWeight.w700),
+                SizedBox(height: 20),
+                Text(
+                  context.l10n.plateNumber,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(context),
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                const SizedBox(height: 7),
+                SizedBox(height: 7),
                 TextField(
                   textCapitalization: TextCapitalization.characters,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: '2AB-1234',
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Official registry verification is not connected in this demo.',
-                  style: TextStyle(color: muted, fontSize: 12),
+                SizedBox(height: 8),
+                Text(
+                  context.l10n.officialRegistryVerificationIsNotConnectedIn,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaMuted(context),
+                    fontSize: 12,
+                  ),
                 ),
-                const SizedBox(height: 18),
+                SizedBox(height: 18),
                 FilledButton(
                   onPressed: () => showDemoMessage(
                     context,
-                    'Vehicle verification needs an official registry connection.',
+                    context
+                        .l10n
+                        .vehicleVerificationNeedsAnOfficialRegistryConnection,
                   ),
-                  child: const Text('Submit for verification'),
+                  child: Text(context.l10n.submitForVerification),
                 ),
               ],
             ),
@@ -91,18 +117,20 @@ class VehiclesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'My Vehicles',
+    title: context.l10n.myVehiclesLabel,
     actions: [
       Padding(
-        padding: const EdgeInsets.only(right: 12),
+        padding: EdgeInsets.only(right: 12),
         child: FilledButton.tonalIcon(
           onPressed: () => _addVehicle(context),
-          icon: const Icon(Icons.add, size: 20),
-          label: const Text('Add'),
+          icon: Icon(Icons.add, size: 20),
+          label: Text(context.l10n.add),
           style: FilledButton.styleFrom(
-            minimumSize: const Size(0, 40),
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            textStyle: const TextStyle(
+            minimumSize: Size(0, 40),
+            padding: EdgeInsets.symmetric(horizontal: 14),
+            textStyle: TextStyle(
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -127,44 +155,48 @@ class VehiclesScreen extends StatelessWidget {
                         height: 48,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEAF1FF),
+                          color: aicaTone(context, Color(0xFFEAF1FF)),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
                           vehicle.type == 'Car'
                               ? Icons.directions_car
                               : Icons.two_wheeler,
-                          color: blue,
+                          color: aicaBlue(context),
                           size: 26,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               vehicle.name,
-                              style: const TextStyle(
-                                color: ink,
+                              style: TextStyle(
+                                fontFamily: aicaFontFamily,
+                                fontFamilyFallback: khmerFontFallback,
+                                color: aicaInk(context),
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                             Text(
-                              vehicle.type,
-                              style: const TextStyle(
-                                color: muted,
+                              vehicleTypeLabel(context, vehicle.type),
+                              style: TextStyle(
+                                fontFamily: aicaFontFamily,
+                                fontFamilyFallback: khmerFontFallback,
+                                color: aicaMuted(context),
                                 fontSize: 12.5,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const Icon(Icons.chevron_right, color: muted),
+                      Icon(Icons.chevron_right, color: aicaMuted(context)),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Row(
                     children: [
                       Flexible(
@@ -172,24 +204,34 @@ class VehiclesScreen extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: 8,
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              border: Border.all(color: ink, width: 2),
+                              border: Border.all(
+                                color: aicaInk(context),
+                                width: 2,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
                               children: [
-                                const Text(
+                                Text(
                                   'CAMBODIA · ព្រះរាជាណាចក្រកម្ពុជា',
-                                  style: TextStyle(color: blue, fontSize: 6),
+                                  style: TextStyle(
+                                    fontFamily: aicaFontFamily,
+                                    fontFamilyFallback: khmerFontFallback,
+                                    color: aicaBlue(context),
+                                    fontSize: 6,
+                                  ),
                                 ),
                                 Text(
                                   vehicle.plate,
-                                  style: const TextStyle(
-                                    color: ink,
+                                  style: TextStyle(
+                                    fontFamily: aicaFontFamily,
+                                    fontFamilyFallback: khmerFontFallback,
+                                    color: aicaInk(context),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 1,
@@ -200,20 +242,22 @@ class VehiclesScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Spacer(),
+                      Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: Color(0xFFE5F6EB),
+                          color: aicaTone(context, Color(0xFFE5F6EB)),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Text(
-                          '✓ Verified',
+                        child: Text(
+                          context.l10n.verifiedLabel,
                           style: TextStyle(
-                            color: Color(0xFF188653),
+                            fontFamily: aicaFontFamily,
+                            fontFamilyFallback: khmerFontFallback,
+                            color: aicaTone(context, Color(0xFF188653)),
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),
@@ -225,7 +269,7 @@ class VehiclesScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
         ],
       ],
     ),

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_data.dart';
 import '../model/violation.dart';
 import 'appeal_screen.dart';
@@ -14,24 +19,27 @@ class ViolationDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final confirmed = violation.status == ViolationStatus.confirmed;
     return DetailPage(
-      title: 'Violation details',
+      title: context.l10n.violationDetails,
       bottom: Row(
         children: [
           Expanded(
             child: OutlinedButton(
               onPressed: () =>
                   openPage(context, AppealScreen(violation: violation)),
-              child: Text(confirmed ? 'Appeal' : 'Appeal or dispute'),
+              child: Text(
+                confirmed ? context.l10n.appeal : context.l10n.appealOrDispute,
+              ),
             ),
           ),
           if (confirmed) ...[
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Expanded(
-              child: FilledButton(
+              child: FilledButton.icon(
+                icon: const Icon(Icons.lock_outline, size: 18),
                 onPressed: () {
                   openPage(context, ReviewPaymentScreen(fines: [violation]));
                 },
-                child: const Text('🔒 Pay Fine'),
+                label: Text(context.l10n.payFine),
               ),
             ),
           ],
@@ -43,13 +51,13 @@ class ViolationDetailScreen extends StatelessWidget {
           GestureDetector(
             onTap: () => showDemoMessage(
               context,
-              'Video evidence is a demo placeholder.',
+              context.l10n.videoEvidenceIsADemoPlaceholder,
             ),
             child: AspectRatio(
               aspectRatio: 16 / 10,
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     colors: [Color(0xFF10253C), Color(0xFF25446D)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -59,16 +67,16 @@ class ViolationDetailScreen extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 child: Stack(
                   children: [
-                    const Positioned.fill(
+                    Positioned.fill(
                       child: CustomPaint(painter: _EvidencePainter()),
                     ),
-                    const Center(
+                    Center(
                       child: CircleAvatar(
                         radius: 28,
                         backgroundColor: Color(0xEFFFFFFF),
                         child: Icon(
                           Icons.play_arrow_rounded,
-                          color: ink,
+                          color: aicaInk(context),
                           size: 34,
                         ),
                       ),
@@ -78,7 +86,9 @@ class ViolationDetailScreen extends StatelessWidget {
                       top: 12,
                       child: Text(
                         '●  CAM-017',
-                        style: const TextStyle(
+                        style: TextStyle(
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
                           color: Colors.white,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -90,18 +100,25 @@ class ViolationDetailScreen extends StatelessWidget {
                       bottom: 12,
                       child: Text(
                         '${violation.date} ${violation.time}:07',
-                        style: const TextStyle(
+                        style: TextStyle(
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
                           color: Colors.white,
                           fontSize: 11,
                         ),
                       ),
                     ),
-                    const Positioned(
+                    Positioned(
                       right: 14,
                       bottom: 12,
                       child: Text(
-                        'DEMO PLACEHOLDER',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
+                        context.l10n.demoPlaceholder,
+                        style: TextStyle(
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   ],
@@ -109,13 +126,13 @@ class ViolationDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: confirmed
-                  ? const Color(0xFFFDEBEC)
-                  : const Color(0xFFEAF1FF),
+                  ? aicaTone(context, Color(0xFFFDEBEC))
+                  : aicaTone(context, Color(0xFFEAF1FF)),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -123,29 +140,41 @@ class ViolationDetailScreen extends StatelessWidget {
               children: [
                 Text(
                   confirmed
-                      ? '✹  Officially confirmed'
-                      : '✦  AI-suspected only',
+                      ? context.l10n.officiallyConfirmed
+                      : context.l10n.aiSuspectedOnly,
                   style: TextStyle(
-                    color: confirmed ? const Color(0xFFC32632) : blue,
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: confirmed
+                        ? aicaTone(context, Color(0xFFC32632))
+                        : aicaBlue(context),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text(
-                  confirmed ? 'Review the details. You may pay or appeal.' : 'No fine exists. An officer must review this clip first.',
-                  style: const TextStyle(color: muted),
+                  confirmed
+                      ? context.l10n.reviewTheDetailsYouMayPayOr
+                      : context.l10n.noFineExistsAnOfficerMustReview,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaMuted(context),
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: Text(
-                  violation.title,
-                  style: const TextStyle(
-                    color: ink,
+                  violationTitle(context, violation),
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(context),
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                   ),
@@ -154,62 +183,63 @@ class ViolationDetailScreen extends StatelessWidget {
               StatusBadge(violation.status),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           FilledButton.tonalIcon(
-            onPressed: () => showModalBottomSheet<void>(
+            onPressed: () => showMobileBottomSheet<void>(
               context: context,
               showDragHandle: true,
               builder: (sheetContext) => SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
-                        'What does this mean?',
+                      Text(
+                        context.l10n.whatDoesThisMean,
                         style: TextStyle(
-                          color: ink,
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
+                          color: aicaInk(context),
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
-                      const SizedBox(height: 14),
-                      const Text(
-                        'Our camera system noticed that your vehicle may have broken a traffic rule at this place and time. This is a plain-language summary for demo purposes, not legal advice.',
-                      ),
-                      const SizedBox(height: 14),
-                      const Text(
-                        '✓ AI marks clips it is unsure about. People make the final decision.\n\n✓ You can watch the evidence and appeal if it looks wrong.\n\n✓ You only pay after an official confirmation.',
-                      ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 14),
+                      Text(context.l10n.ourCameraSystemNoticedThatYourVehicle),
+                      SizedBox(height: 14),
+                      Text(context.l10n.explanationChecks),
+                      SizedBox(height: 20),
                       FilledButton(
                         onPressed: () => Navigator.pop(sheetContext),
-                        child: const Text('Got it'),
+                        child: Text(context.l10n.gotIt),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-            icon: const Icon(Icons.help_outline),
-            label: const Text('Explain this violation'),
+            icon: Icon(Icons.help_outline),
+            label: Text(context.l10n.explainThisViolation),
           ),
-          const SizedBox(height: 24),
-          const SectionTitle('Incident'),
+          SizedBox(height: 24),
+          SectionTitle(context.l10n.incident),
           AppPanel(
             child: Column(
               children: [
-                InfoRow('Location', violation.location),
-                const Divider(height: 1),
-                InfoRow('Date & time', '${violation.date} · ${violation.time}'),
-                const Divider(height: 1),
-                InfoRow('Reference', violation.reference),
+                InfoRow(context.l10n.location, violation.location),
+                Divider(height: 1),
+                InfoRow(
+                  context.l10n.dateTime,
+                  '${violation.date} · ${violation.time}',
+                ),
+                Divider(height: 1),
+                InfoRow(context.l10n.reference, violation.reference),
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          const SectionTitle('Vehicle'),
+          SizedBox(height: 24),
+          SectionTitle(context.l10n.vehicle),
           AppPanel(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -219,29 +249,30 @@ class ViolationDetailScreen extends StatelessWidget {
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: ink, width: 2),
+                        color: aicaSurface(context),
+                        border: Border.all(color: aicaInk(context), width: 2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
                         children: [
-                          const Text(
+                          Text(
                             'CAMBODIA · ព្រះរាជាណាចក្រកម្ពុជា',
                             style: TextStyle(
-                              color: blue,
+                              fontFamily: aicaFontFamily,
+                              fontFamilyFallback: khmerFontFallback,
+                              color: aicaBlue(context),
                               fontSize: 6,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
                             violation.plate,
-                            style: const TextStyle(
-                              color: ink,
+                            style: TextStyle(
+                              fontFamily: aicaFontFamily,
+                              fontFamilyFallback: khmerFontFallback,
+                              color: aicaInk(context),
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1,
@@ -252,46 +283,56 @@ class ViolationDetailScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Flexible(
                   child: Text(
                     violation.plate == '2AB-1234'
                         ? 'Toyota Prius'
                         : 'Honda Click 125i',
                     textAlign: TextAlign.right,
-                    style: const TextStyle(color: muted, fontSize: 13),
+                    style: TextStyle(
+                      fontFamily: aicaFontFamily,
+                      fontFamilyFallback: khmerFontFallback,
+                      color: aicaMuted(context),
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          const SectionTitle('Official fine'),
+          SizedBox(height: 24),
+          SectionTitle(context.l10n.officialFine),
           AppPanel(
             child: confirmed
                 ? Column(
                     children: [
-                      InfoRow('Base fine', riel(violation.amount)),
-                      const Divider(height: 1),
-                      const InfoRow('Service fee', '0 ៛'),
-                      const Divider(height: 1),
-                      const InfoRow('Pay by', '31 Oct 2026'),
-                      const Divider(height: 1),
-                      InfoRow('Total', riel(violation.amount)),
+                      InfoRow(context.l10n.baseFine, riel(violation.amount)),
+                      Divider(height: 1),
+                      InfoRow(context.l10n.serviceFee, '0 ៛'),
+                      Divider(height: 1),
+                      InfoRow(context.l10n.payBy, '31 Oct 2026'),
+                      Divider(height: 1),
+                      InfoRow(context.l10n.total, riel(violation.amount)),
                     ],
                   )
-                : const Row(
+                : Row(
                     children: [
                       Icon(
                         Icons.gpp_maybe_outlined,
-                        color: Color(0xFF9D6B00),
+                        color: aicaTone(context, Color(0xFF9D6B00)),
                         size: 26,
                       ),
                       SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'No official fine has been issued for this event.',
-                          style: TextStyle(color: muted, fontSize: 14),
+                          context.l10n.noOfficialFineHasBeenIssuedFor,
+                          style: TextStyle(
+                            fontFamily: aicaFontFamily,
+                            fontFamilyFallback: khmerFontFallback,
+                            color: aicaMuted(context),
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ],
@@ -314,7 +355,7 @@ class _EvidencePainter extends CustomPainter {
       ..lineTo(size.width * .62, size.height * .48)
       ..lineTo(size.width, size.height)
       ..close();
-    canvas.drawPath(road, Paint()..color = const Color(0xFF0D1623));
+    canvas.drawPath(road, Paint()..color = Color(0xFF0D1623));
     canvas.drawLine(
       Offset(size.width / 2, size.height * .5),
       Offset(size.width / 2, size.height),
@@ -324,16 +365,16 @@ class _EvidencePainter extends CustomPainter {
     );
     final vehicle = RRect.fromRectAndRadius(
       Rect.fromLTWH(size.width * .55, size.height * .60, 52, 30),
-      const Radius.circular(6),
+      Radius.circular(6),
     );
-    canvas.drawRRect(vehicle, Paint()..color = const Color(0xFFD9E2EC));
+    canvas.drawRRect(vehicle, Paint()..color = Color(0xFFD9E2EC));
     canvas.drawRect(
       Rect.fromLTWH(size.width * .52, size.height * .54, 70, 52),
       Paint()
         ..color = Colors.transparent
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2
-        ..color = const Color(0xFFF59E0B),
+        ..color = Color(0xFFF59E0B),
     );
   }
 

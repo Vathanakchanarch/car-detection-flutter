@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+
 import 'package:flutter/services.dart';
 
 import 'verify_screen.dart';
@@ -23,8 +28,8 @@ class _SignInScreenState extends State<SignInScreen> {
     final digits = _phoneController.text.replaceAll(RegExp(r'\D'), '');
     if (!_consented || digits.length < 8 || digits.length > 9) {
       final message = !_consented
-          ? 'Please agree to the terms before continuing.'
-          : 'Enter a valid Cambodian phone number.';
+          ? context.l10n.pleaseAgreeToTheTermsBeforeContinuing
+          : context.l10n.enterAValidCambodianPhoneNumber;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
       return;
@@ -40,7 +45,7 @@ class _SignInScreenState extends State<SignInScreen> {
     body: SafeArea(
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 390),
+          constraints: BoxConstraints(maxWidth: 390),
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               24,
@@ -63,36 +68,38 @@ class _SignInScreenState extends State<SignInScreen> {
                             height: 56,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF102A43),
+                              color: Color(0xFF102A43),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.traffic_rounded,
                               color: Color(0xFF60A5FA),
                               size: 34,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24),
                         Text(
-                          'Welcome back',
+                          context.l10n.welcomeBack,
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
-                          'Sign in or create an account with your phone number. We will send a one-time code.',
+                          context.l10n.signInOrCreateAnAccountWith,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        const SizedBox(height: 32),
-                        const Text(
-                          'Phone number',
+                        SizedBox(height: 32),
+                        Text(
+                          context.l10n.phoneNumber,
                           style: TextStyle(
+                            fontFamily: aicaFontFamily,
+                            fontFamilyFallback: khmerFontFallback,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF102A43),
+                            color: aicaInk(context),
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         TextField(
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
@@ -101,15 +108,17 @@ class _SignInScreenState extends State<SignInScreen> {
                             LengthLimitingTextInputFormatter(9),
                           ],
                           decoration: InputDecoration(
-                            prefixIcon: const Padding(
+                            prefixIcon: Padding(
                               padding: EdgeInsets.only(left: 16, right: 8),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '🇰🇭 +855',
+                                    '+855',
                                     style: TextStyle(
-                                      color: Color(0xFF102A43),
+                                      fontFamily: aicaFontFamily,
+                                      fontFamilyFallback: khmerFontFallback,
+                                      color: aicaInk(context),
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -124,30 +133,32 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             hintText: '12 345 678',
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: aicaSurface(context),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFC9D5E2),
+                              borderSide: BorderSide(
+                                color: aicaBorder(context),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFC9D5E2),
+                              borderSide: BorderSide(
+                                color: aicaBorder(context),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        const Text(
-                          'Example: 12 345 678',
+                        SizedBox(height: 6),
+                        Text(
+                          context.l10n.example12345678,
                           style: TextStyle(
-                            color: Color(0xFF526579),
+                            fontFamily: aicaFontFamily,
+                            fontFamilyFallback: khmerFontFallback,
+                            color: aicaMuted(context),
                             fontSize: 12,
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24),
                         InkWell(
                           onTap: () => setState(() => _consented = !_consented),
                           borderRadius: BorderRadius.circular(8),
@@ -155,33 +166,35 @@ class _SignInScreenState extends State<SignInScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                margin: const EdgeInsets.only(top: 2),
+                                margin: EdgeInsets.only(top: 2),
                                 width: 24,
                                 height: 24,
                                 decoration: BoxDecoration(
                                   color: _consented
-                                      ? const Color(0xFF2563EB)
+                                      ? aicaBlue(context)
                                       : Colors.transparent,
                                   border: Border.all(
-                                    color: const Color(0xFF2563EB),
+                                    color: aicaBlue(context),
                                     width: 2,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: _consented
-                                    ? const Icon(
+                                    ? Icon(
                                         Icons.check,
                                         size: 16,
-                                        color: Colors.white,
+                                        color: aicaSurface(context),
                                       )
                                     : null,
                               ),
-                              const SizedBox(width: 12),
-                              const Expanded(
+                              SizedBox(width: 12),
+                              Expanded(
                                 child: Text(
-                                  'I agree to the Terms and the Privacy Notice. My phone number and vehicle data are used only to show my own records.',
+                                  context.l10n.iAgreeToTheTermsAndThe,
                                   style: TextStyle(
-                                    color: Color(0xFF526579),
+                                    fontFamily: aicaFontFamily,
+                                    fontFamilyFallback: khmerFontFallback,
+                                    color: aicaMuted(context),
                                     fontSize: 13,
                                     height: 1.45,
                                   ),
@@ -190,28 +203,32 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                         ),
-                        const Spacer(),
+                        Spacer(),
                         FilledButton.icon(
                           onPressed: _sendCode,
-                          icon: const Icon(Icons.sms_outlined),
-                          label: const Text('Send code'),
+                          icon: Icon(Icons.sms_outlined),
+                          label: Text(context.l10n.sendCode),
                         ),
-                        const SizedBox(height: 16),
-                        const Row(
+                        SizedBox(height: 16),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.lock,
                               size: 14,
-                              color: Color(0xFF526579),
+                              color: aicaMuted(context),
                             ),
                             SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                'Encrypted. Not an official government app.',
+                                context
+                                    .l10n
+                                    .encryptedNotAnOfficialGovernmentApp,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Color(0xFF526579),
+                                  fontFamily: aicaFontFamily,
+                                  fontFamilyFallback: khmerFontFallback,
+                                  color: aicaMuted(context),
                                   fontSize: 12,
                                 ),
                               ),

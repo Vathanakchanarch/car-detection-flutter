@@ -2,15 +2,20 @@ import 'package:flutter/foundation.dart';
 
 import '../model/violation.dart';
 import 'demo_data.dart';
+import 'local/local_storage_service.dart';
 
 class DemoStore extends ChangeNotifier {
+  LocalStorageService? _localStorage;
+
   String phone = '12 345 678';
   String name = 'Sophea Vann';
   String email = '';
+  bool hasCompletedOnboarding = false;
+  String languageCode = 'en';
   bool darkMode = false;
   final Set<String> selectedFineIds = {'speeding', 'helmet'};
   final Set<String> paidFineIds = {};
-  final Set<int> readNotificationIds = {3, 4, 5};
+  final Set<int> readNotificationIds = {};
   final Map<String, String> appeals = {};
   final Map<String, bool> notificationPreferences = {
     'New potential violations': true,
@@ -29,6 +34,31 @@ class DemoStore extends ChangeNotifier {
   int get selectedTotal => payable
       .where((v) => selectedFineIds.contains(v.id))
       .fold(0, (sum, v) => sum + v.amount);
+
+  String get languageName => languageCode == 'km' ? 'ខ្មែរ' : 'English';
+
+  Future<void> initialize(LocalStorageService localStorage) async {
+    _localStorage = localStorage;
+    hasCompletedOnboarding = localStorage.isOnboardingCompleted();
+    languageCode = localStorage.getLanguage();
+    darkMode = localStorage.isDarkMode();
+    readNotificationIds
+      ..clear()
+      ..addAll(localStorage.getReadNotificationIds());
+    notifyListeners();
+  }
+
+  Future<void> completeOnboarding() async {
+    hasCompletedOnboarding = true;
+    notifyListeners();
+    await _localStorage?.setOnboardingCompleted(true);
+  }
+
+  Future<void> setLanguage(String value) async {
+    languageCode = value == 'km' ? 'km' : 'en';
+    notifyListeners();
+    await _localStorage?.setLanguage(languageCode);
+  }
 
   void setPhone(String value) {
     final digits = value.replaceAll(RegExp(r'\D'), '');
@@ -67,16 +97,18 @@ class DemoStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  void markRead(int id) {
+  Future<void> markRead(int id) async {
     readNotificationIds.add(id);
     notifyListeners();
+    await _localStorage?.saveReadNotificationIds(readNotificationIds);
   }
 
-  void markAllRead() {
+  Future<void> markAllRead() async {
     readNotificationIds.addAll(
       List.generate(demoNotifications.length, (index) => index),
     );
     notifyListeners();
+    await _localStorage?.saveReadNotificationIds(readNotificationIds);
   }
 
   void setPreference(String key, bool value) {
@@ -84,23 +116,25 @@ class DemoStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setDarkMode(bool value) {
+  Future<void> setDarkMode(bool value) async {
     darkMode = value;
     notifyListeners();
+    await _localStorage?.setDarkMode(value);
   }
 
   void reset() {
+    _localStorage = null;
     phone = '12 345 678';
     name = 'Sophea Vann';
     email = '';
+    hasCompletedOnboarding = false;
+    languageCode = 'en';
     darkMode = false;
     selectedFineIds
       ..clear()
       ..addAll({'speeding', 'helmet'});
     paidFineIds.clear();
-    readNotificationIds
-      ..clear()
-      ..addAll({3, 4, 5});
+    readNotificationIds.clear();
     appeals.clear();
     notificationPreferences
       ..clear()

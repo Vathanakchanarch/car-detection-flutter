@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
+import '../data/demo_store.dart';
 import '../data/onboarding_content.dart';
 import 'sign_in_screen.dart';
 import 'widgets/traffic_illustration.dart';
@@ -14,16 +20,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int _index = 0;
 
-  void _openSignIn() => Navigator.of(context).pushReplacement(
-    MaterialPageRoute<void>(builder: (_) => const SignInScreen()),
-  );
+  Future<void> _openSignIn() async {
+    await demoStore.completeOnboarding();
+    if (!mounted) return;
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute<void>(builder: (_) => SignInScreen()));
+  }
 
   void _next() {
     if (_index == onboardingPages.length - 1) {
       _openSignIn();
     } else {
       _controller.nextPage(
-        duration: const Duration(milliseconds: 280),
+        duration: Duration(milliseconds: 280),
         curve: Curves.easeOut,
       );
     }
@@ -40,11 +50,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     body: SafeArea(
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 390),
+          constraints: BoxConstraints(maxWidth: 390),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 12, 0),
+                padding: EdgeInsets.fromLTRB(24, 16, 12, 0),
                 child: SizedBox(
                   height: 44,
                   child: Align(
@@ -52,14 +62,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: TextButton(
                       onPressed: _openSignIn,
                       style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF526579),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        textStyle: const TextStyle(
+                        foregroundColor: aicaMuted(context),
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        textStyle: TextStyle(
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      child: const Text('Skip'),
+                      child: Text(context.l10n.skip),
                     ),
                   ),
                 ),
@@ -73,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     final page = onboardingPages[index];
                     return LayoutBuilder(
                       builder: (context, constraints) => SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: EdgeInsets.symmetric(horizontal: 24),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
@@ -85,17 +97,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 artwork: page.artwork,
                                 backgroundColor: page.backgroundColor,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               Text(
-                                page.title,
+                                onboardingTitle(context, index),
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context)
                                     .textTheme
                                     .headlineMedium,
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12),
                               Text(
-                                page.description,
+                                onboardingDescription(context, index),
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
@@ -112,22 +124,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: List.generate(onboardingPages.length, (index) {
                   final selected = index == _index;
                   return AnimatedContainer(
-                    duration: const Duration(milliseconds: 220),
+                    duration: Duration(milliseconds: 220),
                     width: selected ? 32 : 8,
                     height: 8,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    margin: EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
-                      color: selected
-                          ? const Color(0xFF2563EB)
-                          : const Color(0xFFC9D5E2),
+                      color: selected ? aicaBlue(context) : aicaBorder(context),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   );
                 }),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 36),
+                padding: EdgeInsets.fromLTRB(24, 0, 24, 36),
                 child: FilledButton.icon(
                   onPressed: _next,
                   icon: Icon(
@@ -137,8 +147,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   label: Text(
                     _index == onboardingPages.length - 1
-                        ? 'Get Started'
-                        : 'Next',
+                        ? context.l10n.getStarted
+                        : context.l10n.next,
                   ),
                 ),
               ),

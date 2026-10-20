@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+
 import '../data/demo_data.dart';
 import '../data/demo_store.dart';
 import 'licence_screen.dart';
@@ -16,34 +20,43 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: demoStore,
     builder: (context, _) => ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 32),
       children: [
         Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 24,
               backgroundColor: ink,
               child: Text(
                 'SV',
                 style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Good morning',
-                    style: TextStyle(color: muted, fontSize: 13),
+                  Text(
+                    context.l10n.goodMorning,
+                    style: TextStyle(
+                      fontFamily: aicaFontFamily,
+                      fontFamilyFallback: khmerFontFallback,
+                      color: aicaMuted(context),
+                      fontSize: 13,
+                    ),
                   ),
                   Text(
                     demoStore.name,
-                    style: const TextStyle(
-                      color: ink,
+                    style: TextStyle(
+                      fontFamily: aicaFontFamily,
+                      fontFamilyFallback: khmerFontFallback,
+                      color: aicaInk(context),
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
@@ -55,15 +68,15 @@ class HomeScreen extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: const Color(0xFFC9D5E2)),
+                color: aicaSurface(context),
+                border: Border.all(color: aicaBorder(context)),
                 shape: BoxShape.circle,
               ),
               child: IconButton(
-                tooltip: 'Notifications',
-                onPressed: () => openPage(context, const NotificationsScreen()),
-                icon: const Badge(
-                  backgroundColor: Color(0xFFC32632),
+                tooltip: context.l10n.notifications,
+                onPressed: () => openPage(context, NotificationsScreen()),
+                icon: Badge(
+                  backgroundColor: aicaTone(context, Color(0xFFC32632)),
                   label: Text('3'),
                   child: Icon(Icons.notifications),
                 ),
@@ -71,11 +84,11 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               colors: [Color(0xFF102A43), Color(0xFF173A70)],
             ),
             borderRadius: BorderRadius.circular(24),
@@ -83,63 +96,76 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'You have fines to pay',
-                style: TextStyle(color: Colors.white70, fontSize: 13),
+              Text(
+                context.l10n.youHaveFinesToPay,
+                style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
+                  color: Colors.white70,
+                  fontSize: 13,
+                ),
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 5),
               Text(
                 riel(demoStore.payable.fold(0, (sum, v) => sum + v.amount)),
-                style: const TextStyle(
+                style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
                   color: Colors.white,
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const Text(
-                '2 confirmed · pay by 31 Oct 2026',
-                style: TextStyle(color: Colors.white70, fontSize: 13),
+              Text(
+                context.l10n.label2ConfirmedPayBy31Oct2026,
+                style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
+                  color: Colors.white70,
+                  fontSize: 13,
+                ),
               ),
-              const SizedBox(height: 20),
-              FilledButton(
+              SizedBox(height: 20),
+              FilledButton.icon(
+                icon: const Icon(Icons.lock_outline, size: 18),
                 style: FilledButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: ink,
+                  backgroundColor: aicaSurface(context),
+                  foregroundColor: aicaInk(context),
                 ),
                 onPressed: () => onSelectTab(2),
-                child: const Text('🔒  Pay now'),
+                label: Text(context.l10n.payNow),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         Row(
           children: [
             _Shortcut(
               Icons.payments_outlined,
-              'Pay fines',
+              context.l10n.payFines,
               () => onSelectTab(2),
             ),
-            _Shortcut(Icons.gavel, 'Appeal', () => onSelectTab(1)),
+            _Shortcut(Icons.gavel, context.l10n.appeal, () => onSelectTab(1)),
             _Shortcut(
               Icons.directions_car_outlined,
-              'Vehicles',
-              () => openPage(context, const VehiclesScreen()),
+              context.l10n.vehicles,
+              () => openPage(context, VehiclesScreen()),
             ),
             _Shortcut(
               Icons.badge_outlined,
-              'Licence',
-              () => openPage(context, const LicenceScreen()),
+              context.l10n.licence,
+              () => openPage(context, LicenceScreen()),
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         Row(
           children: [
-            const Expanded(child: SectionTitle('Recent alerts')),
+            Expanded(child: SectionTitle(context.l10n.recentAlerts)),
             TextButton(
               onPressed: () => onSelectTab(1),
-              child: const Text('See all'),
+              child: Text(context.l10n.seeAll),
             ),
           ],
         ),
@@ -155,7 +181,7 @@ class HomeScreen extends StatelessWidget {
                     ViolationDetailScreen(violation: demoViolations[i]),
                   ),
                 ),
-                if (i < 2) const Divider(height: 1),
+                if (i < 2) Divider(height: 1),
               ],
             ],
           ),
@@ -181,17 +207,19 @@ class _Shortcut extends StatelessWidget {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFFC9D5E2)),
+              color: aicaSurface(context),
+              border: Border.all(color: aicaBorder(context)),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: blue),
+            child: Icon(icon, color: aicaBlue(context)),
           ),
-          const SizedBox(height: 7),
+          SizedBox(height: 7),
           Text(
             label,
-            style: const TextStyle(
-              color: ink,
+            style: TextStyle(
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaInk(context),
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),

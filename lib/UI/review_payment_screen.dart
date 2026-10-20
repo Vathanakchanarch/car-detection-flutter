@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_data.dart';
-import '../data/demo_store.dart';
 import '../model/violation.dart';
+import 'payment_flow_screens.dart';
 import 'widgets/app_components.dart';
 
 class ReviewPaymentScreen extends StatefulWidget {
@@ -20,137 +25,205 @@ class _ReviewPaymentScreenState extends State<ReviewPaymentScreen> {
   Future<void> _confirm() async {
     final accepted = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Confirm demo payment'),
-        content: Text(
-          'Mark ${widget.fines.length} fine(s) worth ${riel(total)} as paid in this local prototype? No money will be transferred.',
+      builder: (dialogContext) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        backgroundColor: aicaSurface(dialogContext),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 358),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 68,
+                  height: 68,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: aicaTone(dialogContext, const Color(0xFFEAF1FF)),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.shield_outlined,
+                    size: 34,
+                    color: aicaBlue(dialogContext),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  dialogContext.l10n.confirmPayment,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(dialogContext),
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  dialogContext.l10n.confirmPaymentBody(
+                    widget.fines.length,
+                    riel(total),
+                  ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaMuted(dialogContext),
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  dialogContext.l10n.demoPaymentDisclaimer,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaMuted(dialogContext),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () => Navigator.pop(dialogContext, true),
+                    child: Text(dialogContext.l10n.confirmAndPay),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, false),
+                  child: Text(dialogContext.l10n.cancel),
+                ),
+              ],
+            ),
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Confirm demo'),
-          ),
-        ],
       ),
     );
     if (accepted != true || !mounted) return;
-    demoStore.payFines(widget.fines.map((fine) => fine.id));
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => DetailPage(
-          title: 'Demo payment complete',
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              const Icon(
-                Icons.check_circle,
-                color: Color(0xFF188653),
-                size: 80,
-              ),
-              const SizedBox(height: 18),
-              Text(
-                '${riel(total)} marked paid',
-                style: const TextStyle(
-                  color: ink,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'This is a local simulation. No official payment was made.',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+        builder: (_) =>
+            ProcessingPaymentScreen(fines: widget.fines, amount: total),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'Review & pay',
-    bottom: FilledButton.icon(
-      onPressed: _demoSelected ? _confirm : null,
-      icon: const Icon(Icons.lock_outline),
-      label: Text('Pay ${riel(total)}'),
+    title: context.l10n.reviewPay,
+    bottom: SafeArea(
+      top: false,
+      child: FilledButton.icon(
+        onPressed: _demoSelected ? _confirm : null,
+        icon: Icon(Icons.lock_outline),
+        label: Text(context.l10n.payAmount(riel(total))),
+      ),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF4D9),
+            color: aicaTone(context, Color(0xFFFFF4D9)),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.science, color: Color(0xFF9D6B00), size: 20),
+              Icon(
+                Icons.science,
+                color: aicaTone(context, Color(0xFF9D6B00)),
+                size: 20,
+              ),
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Payments are not connected to an authorised government service yet. This screen simulates the flow.',
-                  style: TextStyle(color: Color(0xFF9D6B00), fontSize: 13),
+                  context.l10n.paymentsAreNotConnectedToAnAuthorised,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaTone(context, Color(0xFF9D6B00)),
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 20),
-        const SectionTitle('Fines'),
+        SizedBox(height: 20),
+        SectionTitle(context.l10n.fines),
         AppPanel(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               for (final fine in widget.fines)
-                InfoRow(fine.title, riel(fine.amount)),
-              const Divider(height: 1),
-              InfoRow('Total', riel(total)),
+                InfoRow(violationTitle(context, fine), riel(fine.amount)),
+              Divider(height: 1),
+              InfoRow(context.l10n.total, riel(total)),
             ],
           ),
         ),
-        const SizedBox(height: 20),
-        const SectionTitle('Payment method'),
-        const Opacity(
+        SizedBox(height: 20),
+        SectionTitle(context.l10n.paymentMethod),
+        Opacity(
           opacity: .55,
           child: _PaymentOption(
             icon: Icons.account_balance,
-            title: 'Bank app',
-            subtitle: 'Not connected yet',
+            title: context.l10n.bankApp,
+            subtitle: context.l10n.notConnectedYet,
             selected: true,
           ),
         ),
-        const SizedBox(height: 8),
-        const Opacity(
+        SizedBox(height: 8),
+        Opacity(
           opacity: .55,
           child: _PaymentOption(
             icon: Icons.phone_android,
-            title: 'Mobile wallet',
-            subtitle: 'Not connected yet',
+            title: context.l10n.mobileWallet,
+            subtitle: context.l10n.notConnectedYet,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         InkWell(
           onTap: () => setState(() => _demoSelected = true),
           borderRadius: BorderRadius.circular(16),
           child: _PaymentOption(
             icon: Icons.science_outlined,
-            title: 'Demo simulation',
-            subtitle: 'Prototype only',
+            title: context.l10n.demoSimulation,
+            subtitle: context.l10n.prototypeOnly,
             selected: _demoSelected,
           ),
         ),
-        const SizedBox(height: 16),
-        const Text(
-          '🔒 We never ask for or store card details in this app.',
-          style: TextStyle(color: muted, fontSize: 12),
+        SizedBox(height: 16),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.lock_outline, size: 14, color: aicaMuted(context)),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                context.l10n.weNeverAskForOrStoreCard,
+                style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
+                  color: aicaMuted(context),
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     ),
@@ -172,11 +245,13 @@ class _PaymentOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
+    padding: EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: selected ? const Color(0xFFEAF1FF) : Colors.white,
+      color: selected
+          ? aicaTone(context, Color(0xFFEAF1FF))
+          : aicaSurface(context),
       border: Border.all(
-        color: selected ? blue : const Color(0xFFC9D5E2),
+        color: selected ? aicaBlue(context) : aicaBorder(context),
         width: 2,
       ),
       borderRadius: BorderRadius.circular(16),
@@ -188,34 +263,41 @@ class _PaymentOption extends StatelessWidget {
           height: 40,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: aicaTone(context, Color(0xFFF8FAFC)),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: ink),
+          child: Icon(icon, color: aicaInk(context)),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  color: ink,
+                style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
+                  color: aicaInk(context),
                   fontSize: 14.5,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               Text(
                 subtitle,
-                style: const TextStyle(color: muted, fontSize: 12),
+                style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
+                  color: aicaMuted(context),
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
         ),
         Icon(
           selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-          color: selected ? blue : const Color(0xFFC9D5E2),
+          color: selected ? aicaBlue(context) : aicaBorder(context),
         ),
       ],
     ),

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_store.dart';
 import '../model/violation.dart';
 import 'widgets/app_components.dart';
@@ -30,7 +35,10 @@ class _AppealScreenState extends State<AppealScreen> {
 
   void _submit() {
     if (_reason == null && _explanation.text.trim().isEmpty) {
-      showDemoMessage(context, 'Choose a reason or describe what happened.');
+      showDemoMessage(
+        context,
+        context.l10n.chooseAReasonOrDescribeWhatHappened,
+      );
       return;
     }
     demoStore.submitAppeal(
@@ -42,38 +50,50 @@ class _AppealScreenState extends State<AppealScreen> {
 
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: _submitted ? 'Appeal submitted' : 'Appeal / Dispute',
+    title: _submitted
+        ? context.l10n.appealSubmitted
+        : context.l10n.appealDispute,
     bottom: _submitted
         ? FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Done'),
+            child: Text(context.l10n.done),
           )
         : FilledButton.icon(
             onPressed: _submit,
-            icon: const Icon(Icons.send_outlined),
-            label: const Text('Submit appeal'),
+            icon: Icon(Icons.send_outlined),
+            label: Text(context.l10n.submitAppeal),
           ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (_submitted) ...[
-          const SizedBox(height: 36),
-          const Icon(Icons.check_circle, color: Color(0xFF188653), size: 76),
-          const SizedBox(height: 18),
-          const Text(
-            'Your demo appeal was saved locally.',
+          SizedBox(height: 36),
+          Icon(
+            Icons.check_circle,
+            color: aicaTone(context, Color(0xFF188653)),
+            size: 76,
+          ),
+          SizedBox(height: 18),
+          Text(
+            context.l10n.yourDemoAppealWasSavedLocally,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: ink,
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaInk(context),
               fontSize: 20,
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'No official submission was made.',
+          SizedBox(height: 8),
+          Text(
+            context.l10n.noOfficialSubmissionWasMade,
             textAlign: TextAlign.center,
-            style: TextStyle(color: muted),
+            style: TextStyle(
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaMuted(context),
+            ),
           ),
         ] else ...[
           AppPanel(
@@ -84,29 +104,39 @@ class _AppealScreenState extends State<AppealScreen> {
                   height: 44,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFDEBEC),
+                    color: aicaTone(context, Color(0xFFFDEBEC)),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(Icons.traffic, color: Color(0xFFC32632)),
+                  child: Icon(
+                    Icons.traffic,
+                    color: aicaTone(context, Color(0xFFC32632)),
+                  ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.violation.title,
+                        violationTitle(context, widget.violation),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: ink,
+                        style: TextStyle(
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
+                          color: aicaInk(context),
                           fontSize: 14.5,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         '${widget.violation.plate} · ${widget.violation.date}',
-                        style: const TextStyle(color: muted, fontSize: 12),
+                        style: TextStyle(
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
+                          color: aicaMuted(context),
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -114,23 +144,25 @@ class _AppealScreenState extends State<AppealScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
-            'Reason (optional)',
+          SizedBox(height: 20),
+          Text(
+            context.l10n.reasonOptional,
             style: TextStyle(
-              color: ink,
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaInk(context),
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Wrap(
             spacing: 7,
             runSpacing: 8,
             children: reasons
                 .map(
                   (reason) => ChoiceChip(
-                    label: Text(reason),
+                    label: Text(appealReasonLabel(context, reason)),
                     selected: _reason == reason,
                     onSelected: (_) => setState(
                       () => _reason = _reason == reason ? null : reason,
@@ -139,57 +171,63 @@ class _AppealScreenState extends State<AppealScreen> {
                 )
                 .toList(),
           ),
-          const SizedBox(height: 20),
-          const Text(
-            'Your explanation',
+          SizedBox(height: 20),
+          Text(
+            context.l10n.yourExplanation,
             style: TextStyle(
-              color: ink,
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaInk(context),
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           TextField(
             controller: _explanation,
             maxLength: 500,
             maxLines: 5,
             decoration: InputDecoration(
-              hintText: 'Describe what happened...',
+              hintText: context.l10n.describeWhatHappened,
               filled: true,
-              fillColor: Colors.white,
+              fillColor: aicaSurface(context),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFFC9D5E2)),
+                borderSide: BorderSide(color: aicaBorder(context)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFFC9D5E2)),
+                borderSide: BorderSide(color: aicaBorder(context)),
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          const Text(
-            'Supporting evidence',
+          SizedBox(height: 10),
+          Text(
+            context.l10n.supportingEvidence,
             style: TextStyle(
-              color: ink,
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaInk(context),
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           SizedBox(
             height: 56,
             child: OutlinedButton.icon(
-              onPressed: () =>
-                  showDemoMessage(context, 'Evidence upload needs a backend.'),
+              onPressed: () => showDemoMessage(
+                context,
+                context.l10n.evidenceUploadNeedsABackend,
+              ),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Color(0xFFC9D5E2), width: 2),
+                side: BorderSide(color: aicaBorder(context), width: 2),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              icon: const Icon(Icons.attach_file),
-              label: const Text('Attach photo or document'),
+              icon: Icon(Icons.attach_file),
+              label: Text(context.l10n.attachPhotoOrDocument),
             ),
           ),
         ],

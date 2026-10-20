@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_data.dart';
 import '../model/vehicle.dart';
 import '../model/violation.dart';
@@ -12,15 +17,15 @@ class VehicleDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'Vehicle details',
+    title: context.l10n.vehicleDetails,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: ink,
-            border: Border.all(color: const Color(0xFFC9D5E2)),
+            border: Border.all(color: aicaBorder(context)),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -32,35 +37,41 @@ class VehicleDetailScreen extends StatelessWidget {
                 color: Colors.white,
                 size: 44,
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Text(
                 vehicle.name,
-                style: const TextStyle(
+                style: TextStyle(
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 9,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 9),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: aicaSurface(context),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   children: [
-                    const Text(
+                    Text(
                       'CAMBODIA · ព្រះរាជាណាចក្រកម្ពុជា',
-                      style: TextStyle(color: blue, fontSize: 9),
+                      style: TextStyle(
+                        fontFamily: aicaFontFamily,
+                        fontFamilyFallback: khmerFontFallback,
+                        color: aicaBlue(context),
+                        fontSize: 9,
+                      ),
                     ),
                     Text(
                       vehicle.plate,
-                      style: const TextStyle(
-                        color: ink,
+                      style: TextStyle(
+                        fontFamily: aicaFontFamily,
+                        fontFamilyFallback: khmerFontFallback,
+                        color: aicaInk(context),
                         fontSize: 23,
                         fontWeight: FontWeight.w800,
                       ),
@@ -71,35 +82,35 @@ class VehicleDetailScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 26),
-        const SectionTitle('Details'),
+        SizedBox(height: 26),
+        SectionTitle(context.l10n.details),
         AppPanel(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              InfoRow('Type', vehicle.type),
-              const Divider(height: 1),
-              InfoRow('Colour', vehicle.colour),
-              const Divider(height: 1),
-              InfoRow('Year', '${vehicle.year}'),
-              const Divider(height: 1),
-              InfoRow('Registration expires', vehicle.expiry),
+              InfoRow(context.l10n.type, vehicle.type),
+              Divider(height: 1),
+              InfoRow(context.l10n.colour, vehicle.colour),
+              Divider(height: 1),
+              InfoRow(context.l10n.year, '${vehicle.year}'),
+              Divider(height: 1),
+              InfoRow(context.l10n.registrationExpires, vehicle.expiry),
             ],
           ),
         ),
-        const SizedBox(height: 26),
-        const SectionTitle('Verification'),
-        const AppPanel(
+        SizedBox(height: 26),
+        SectionTitle(context.l10n.verification),
+        AppPanel(
           child: Column(
             children: [
-              _VerificationStep('Submitted'),
-              _VerificationStep('Matched to registry'),
-              _VerificationStep('Verified', last: true),
+              _VerificationStep(context.l10n.submitted),
+              _VerificationStep(context.l10n.matchedToRegistry),
+              _VerificationStep(context.l10n.verified, last: true),
             ],
           ),
         ),
-        const SizedBox(height: 26),
-        const SectionTitle('Linked violations'),
+        SizedBox(height: 26),
+        SectionTitle(context.l10n.linkedViolations),
         AppPanel(
           padding: EdgeInsets.zero,
           child: Column(
@@ -108,7 +119,7 @@ class VehicleDetailScreen extends StatelessWidget {
                   in demoViolations
                       .where((v) => v.plate == vehicle.plate)
                       .indexed) ...[
-                if (index > 0) const Divider(height: 1),
+                if (index > 0) Divider(height: 1),
                 _LinkedViolationRow(violation: violation),
               ],
             ],
@@ -127,7 +138,7 @@ class _LinkedViolationRow extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
     onTap: () => openPage(context, ViolationDetailScreen(violation: violation)),
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           Container(
@@ -135,7 +146,7 @@ class _LinkedViolationRow extends StatelessWidget {
             height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF1FF),
+              color: aicaTone(context, Color(0xFFEAF1FF)),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
@@ -145,33 +156,40 @@ class _LinkedViolationRow extends StatelessWidget {
                 'parking' => Icons.local_parking,
                 _ => Icons.traffic,
               },
-              color: blue,
+              color: aicaBlue(context),
               size: 22,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  violation.title,
+                  violationTitle(context, violation),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: ink,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(context),
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   violation.date,
-                  style: const TextStyle(color: muted, fontSize: 12.5),
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaMuted(context),
+                    fontSize: 12.5,
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: 6),
           StatusBadge(violation.status),
         ],
       ),
@@ -191,24 +209,32 @@ class _VerificationStep extends StatelessWidget {
     children: [
       Column(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 12,
-            backgroundColor: Color(0xFF188653),
-            child: Icon(Icons.check, color: Colors.white, size: 16),
+            backgroundColor: aicaTone(context, Color(0xFF188653)),
+            child: Icon(Icons.check, color: aicaSurface(context), size: 16),
           ),
           if (!last)
-            Container(width: 2, height: 24, color: const Color(0xFF188653)),
+            Container(
+              width: 2,
+              height: 24,
+              color: aicaTone(context, Color(0xFF188653)),
+            ),
         ],
       ),
-      const SizedBox(width: 12),
-      Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: ink,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+      SizedBox(width: 12),
+      Expanded(
+        child: Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaInk(context),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

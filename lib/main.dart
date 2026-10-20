@@ -1,67 +1,43 @@
 import 'package:flutter/material.dart';
 
-import 'UI/onboarding_screen.dart';
+import 'l10n/generated/app_localizations.dart';
+import 'theme/app_theme.dart';
 
-void main() => runApp(const SmartTrafficApp());
+import 'UI/onboarding_screen.dart';
+import 'UI/sign_in_screen.dart';
+import 'UI/widgets/app_components.dart';
+import 'data/demo_store.dart';
+import 'data/local/local_storage_service.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final localStorage = await LocalStorageService.create();
+  await demoStore.initialize(localStorage);
+  runApp(const SmartTrafficApp());
+}
 
 class SmartTrafficApp extends StatelessWidget {
   const SmartTrafficApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'Cambodia Smart Traffic',
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2563EB)),
-      textTheme: const TextTheme(
-        headlineMedium: TextStyle(
-          color: Color(0xFF102A43),
-          fontSize: 28,
-          fontWeight: FontWeight.w800,
-        ),
-        bodyLarge: TextStyle(
-          color: Color(0xFF526579),
-          fontSize: 15,
-          height: 1.55,
-        ),
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: demoStore,
+    builder: (context, _) => MaterialApp(
+      title: 'Cambodia Smart Traffic',
+      navigatorObservers: [ClearMessagesOnNavigation()],
+      builder: (context, child) => Center(
+        child: SizedBox(width: mobileContentWidth, child: child),
       ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          backgroundColor: const Color(0xFF2563EB),
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: const Color(0x732563EB),
-          disabledForegroundColor: const Color(0xBFFFFFFF),
-          minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFC9D5E2)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFC9D5E2)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFF2563EB), width: 2),
-        ),
-      ),
-      dividerTheme: const DividerThemeData(color: Color(0xFFC9D5E2)),
+      debugShowCheckedModeBanner: false,
+      locale: Locale(demoStore.languageCode),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
+      themeMode: demoStore.darkMode ? ThemeMode.dark : ThemeMode.light,
+      home: demoStore.hasCompletedOnboarding
+          ? const SignInScreen()
+          : const OnboardingScreen(),
     ),
-    home: const OnboardingScreen(),
   );
 }

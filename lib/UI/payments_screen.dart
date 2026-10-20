@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_data.dart';
 import '../data/demo_store.dart';
 import 'review_payment_screen.dart';
@@ -13,32 +18,34 @@ class PaymentsScreen extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: demoStore,
     builder: (context, _) => ListView(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 32),
+      padding: EdgeInsets.fromLTRB(16, 10, 16, 32),
       children: [
-        const Text(
-          'Payments',
+        Text(
+          context.l10n.payments,
           style: TextStyle(
-            color: ink,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaInk(context),
             fontSize: 20,
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Row(
           children: [
-            const Expanded(child: SectionTitle('Fines to pay')),
+            Expanded(child: SectionTitle(context.l10n.finesToPay)),
             TextButton(
               onPressed: demoStore.clearFines,
-              child: const Text('Clear'),
+              child: Text(context.l10n.clear),
             ),
           ],
         ),
         AppPanel(
           padding: EdgeInsets.zero,
           child: demoStore.payable.isEmpty
-              ? const Padding(
+              ? Padding(
                   padding: EdgeInsets.all(18),
-                  child: Text('No fines to pay.'),
+                  child: Text(context.l10n.noFinesToPay),
                 )
               : Column(
                   children: [
@@ -46,7 +53,7 @@ class PaymentsScreen extends StatelessWidget {
                       Row(
                         children: [
                           Semantics(
-                            label: 'Select fine',
+                            label: context.l10n.selectFine,
                             checked: demoStore.selectedFineIds.contains(
                               demoStore.payable[i].id,
                             ),
@@ -66,19 +73,22 @@ class PaymentsScreen extends StatelessWidget {
                                           demoStore.selectedFineIds.contains(
                                             demoStore.payable[i].id,
                                           )
-                                          ? blue
-                                          : Colors.white,
-                                      border: Border.all(color: blue, width: 2),
+                                          ? aicaBlue(context)
+                                          : aicaSurface(context),
+                                      border: Border.all(
+                                        color: aicaBlue(context),
+                                        width: 2,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child:
                                         demoStore.selectedFineIds.contains(
                                           demoStore.payable[i].id,
                                         )
-                                        ? const Icon(
+                                        ? Icon(
                                             Icons.check,
                                             size: 19,
-                                            color: Colors.white,
+                                            color: aicaSurface(context),
                                           )
                                         : null,
                                   ),
@@ -98,19 +108,26 @@ class PaymentsScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    demoStore.payable[i].title,
+                                    violationTitle(
+                                      context,
+                                      demoStore.payable[i],
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: ink,
+                                    style: TextStyle(
+                                      fontFamily: aicaFontFamily,
+                                      fontFamilyFallback: khmerFontFallback,
+                                      color: aicaInk(context),
                                       fontSize: 14.5,
                                       fontWeight: FontWeight.w800,
                                     ),
                                   ),
                                   Text(
                                     '${demoStore.payable[i].plate} · ${demoStore.payable[i].date}',
-                                    style: const TextStyle(
-                                      color: muted,
+                                    style: TextStyle(
+                                      fontFamily: aicaFontFamily,
+                                      fontFamilyFallback: khmerFontFallback,
+                                      color: aicaMuted(context),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -120,24 +137,25 @@ class PaymentsScreen extends StatelessWidget {
                           ),
                           Text(
                             riel(demoStore.payable[i].amount),
-                            style: const TextStyle(
-                              color: ink,
+                            style: TextStyle(
+                              fontFamily: aicaFontFamily,
+                              fontFamilyFallback: khmerFontFallback,
+                              color: aicaInk(context),
                               fontSize: 14.5,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                         ],
                       ),
-                      if (i < demoStore.payable.length - 1)
-                        const Divider(height: 1),
+                      if (i < demoStore.payable.length - 1) Divider(height: 1),
                     ],
                   ],
                 ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         AppPanel(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12),
           child: FilledButton.icon(
             onPressed: demoStore.selectedTotal == 0
                 ? null
@@ -151,49 +169,49 @@ class PaymentsScreen extends StatelessWidget {
                           .toList(),
                     ),
                   ),
-            icon: const Icon(Icons.lock_outline),
-            label: Text('Pay ${riel(demoStore.selectedTotal)}'),
+            icon: Icon(Icons.lock_outline),
+            label: Text(context.l10n.payAmount(riel(demoStore.selectedTotal))),
           ),
         ),
-        const SizedBox(height: 28),
-        const SectionTitle('Payment history'),
+        SizedBox(height: 28),
+        SectionTitle(context.l10n.paymentHistory),
         AppPanel(
           padding: EdgeInsets.zero,
           child: Column(
             children: [
-              const _HistoryRow(
-                'Crossing stop line',
+              _HistoryRow(
+                context.l10n.crossingStopLine,
                 '16 Aug 2026',
                 '50,000 ៛',
                 'Paid',
-                Color(0xFF188653),
+                aicaTone(context, Color(0xFF188653)),
               ),
-              const Divider(height: 1),
-              const _HistoryRow(
-                'Seatbelt fine',
+              Divider(height: 1),
+              _HistoryRow(
+                context.l10n.seatbeltFine,
                 '12 Oct 2026',
                 '20,000 ៛',
                 'Pending',
-                Color(0xFF9D6B00),
+                aicaTone(context, Color(0xFF9D6B00)),
               ),
-              const Divider(height: 1),
-              const _HistoryRow(
-                'Parking fine',
+              Divider(height: 1),
+              _HistoryRow(
+                context.l10n.parkingFine,
                 '30 Jul 2026',
                 '40,000 ៛',
                 'Failed',
-                Color(0xFFC32632),
+                aicaTone(context, Color(0xFFC32632)),
               ),
               for (final fine in demoViolations.where(
                 (v) => demoStore.paidFineIds.contains(v.id),
               )) ...[
-                const Divider(height: 1),
+                Divider(height: 1),
                 _HistoryRow(
-                  fine.title,
-                  'Demo payment',
+                  violationTitle(context, fine),
+                  context.l10n.demoPayment,
                   riel(fine.amount),
                   'Paid',
-                  const Color(0xFF188653),
+                  aicaTone(context, Color(0xFF188653)),
                 ),
               ],
             ],
@@ -226,14 +244,15 @@ class _HistoryRow extends StatelessWidget {
       _ => Icons.error,
     };
     final background = switch (status) {
-      'Paid' => const Color(0xFFE5F6EB),
-      'Pending' => const Color(0xFFFFF4D9),
-      _ => const Color(0xFFFDEBEC),
+      'Paid' => aicaTone(context, Color(0xFFE5F6EB)),
+      'Pending' => aicaTone(context, Color(0xFFFFF4D9)),
+      _ => aicaTone(context, Color(0xFFFDEBEC)),
     };
     return InkWell(
-      onTap: () => showDemoMessage(context, 'Payment history is demo data.'),
+      onTap: () =>
+          showDemoMessage(context, context.l10n.paymentHistoryIsDemoData),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -241,12 +260,15 @@ class _HistoryRow extends StatelessWidget {
               height: 44,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFFEAF1FF),
+                color: aicaTone(context, Color(0xFFEAF1FF)),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.receipt_long_outlined, color: blue),
+              child: Icon(
+                Icons.receipt_long_outlined,
+                color: aicaBlue(context),
+              ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,50 +277,58 @@ class _HistoryRow extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: ink,
+                    style: TextStyle(
+                      fontFamily: aicaFontFamily,
+                      fontFamilyFallback: khmerFontFallback,
+                      color: aicaInk(context),
                       fontSize: 14.5,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   Text(
                     date,
-                    style: const TextStyle(color: muted, fontSize: 12),
+                    style: TextStyle(
+                      fontFamily: aicaFontFamily,
+                      fontFamilyFallback: khmerFontFallback,
+                      color: aicaMuted(context),
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   amount,
-                  style: const TextStyle(
-                    color: ink,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(context),
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: background,
+                    color: aicaTone(context, background),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(icon, size: 13, color: color),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
-                        status,
+                        paymentStatusLabel(context, status),
                         style: TextStyle(
-                          color: color,
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
+                          color: aicaTone(context, color),
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),

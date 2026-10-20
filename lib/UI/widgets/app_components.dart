@@ -1,11 +1,62 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/app_colors.dart';
+
+import '../../l10n/l10n_context.dart';
+import '../../l10n/demo_labels.dart';
+
 import '../../data/demo_data.dart';
 import '../../model/violation.dart';
 
 const ink = Color(0xFF102A43);
 const blue = Color(0xFF2563EB);
 const muted = Color(0xFF526579);
+
+const mobileContentWidth = 390.0;
+
+Future<T?> showMobileBottomSheet<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  bool showDragHandle = true,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    constraints: BoxConstraints(maxWidth: mobileContentWidth),
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: aicaSurface(context),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+    ),
+    showDragHandle: showDragHandle,
+    builder: (context) => SafeArea(
+      top: false,
+      child: SingleChildScrollView(child: builder(context)),
+    ),
+  );
+}
+
+/// Prevents a message from following the user onto another route.
+class ClearMessagesOnNavigation extends NavigatorObserver {
+  void _clear(Route<dynamic>? route) {
+    final context = navigator?.context;
+    if (context != null) {
+      ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
+    }
+  }
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      _clear(route);
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      _clear(route);
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) =>
+      _clear(newRoute);
+}
 
 void openPage(BuildContext context, Widget page) {
   Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
@@ -24,10 +75,10 @@ class AppPanel extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: padding,
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: const Color(0xFFC9D5E2)),
+      color: aicaSurface(context),
+      border: Border.all(color: aicaBorder(context)),
       borderRadius: BorderRadius.circular(20),
-      boxShadow: const [
+      boxShadow: [
         BoxShadow(
           color: Color(0x0A102A43),
           blurRadius: 2,
@@ -65,17 +116,19 @@ class DetailPage extends StatelessWidget {
       leadingWidth: 56,
       titleSpacing: 8,
       leading: Padding(
-        padding: const EdgeInsets.only(left: 12),
+        padding: EdgeInsets.only(left: 12),
         child: IconButton(
-          tooltip: 'Back',
+          tooltip: context.l10n.back,
           onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back, color: ink),
+          icon: Icon(Icons.arrow_back, color: aicaInk(context)),
         ),
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          color: ink,
+        style: TextStyle(
+          fontFamily: aicaFontFamily,
+          fontFamilyFallback: khmerFontFallback,
+          color: aicaInk(context),
           fontSize: 20,
           fontWeight: FontWeight.w800,
         ),
@@ -86,22 +139,22 @@ class DetailPage extends StatelessWidget {
     ),
     body: Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 390),
+        constraints: BoxConstraints(maxWidth: 390),
         child: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
                 child: child,
               ),
             ),
             if (bottom != null)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  border: Border(top: BorderSide(color: Color(0xFFC9D5E2))),
+                padding: EdgeInsets.fromLTRB(16, 12, 16, 20),
+                decoration: BoxDecoration(
+                  color: aicaSurface(context),
+                  border: Border(top: BorderSide(color: aicaBorder(context))),
                 ),
                 child: bottom!,
               ),
@@ -117,11 +170,13 @@ class SectionTitle extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 12),
+    padding: EdgeInsets.only(bottom: 12),
     child: Text(
       text,
-      style: const TextStyle(
-        color: ink,
+      style: TextStyle(
+        fontFamily: aicaFontFamily,
+        fontFamilyFallback: khmerFontFallback,
+        color: aicaInk(context),
         fontSize: 16,
         fontWeight: FontWeight.w800,
       ),
@@ -151,7 +206,7 @@ class AppMenuRow extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           Container(
@@ -159,26 +214,32 @@ class AppMenuRow extends StatelessWidget {
             height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: danger ? const Color(0xFFFDEBEC) : const Color(0xFFEAF1FF),
+              color: danger
+                  ? aicaTone(context, Color(0xFFFDEBEC))
+                  : aicaTone(context, Color(0xFFEAF1FF)),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
               icon,
-              color: danger ? const Color(0xFFC32632) : blue,
+              color: danger
+                  ? aicaTone(context, Color(0xFFC32632))
+                  : aicaBlue(context),
               size: 22,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: ink,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(context),
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -186,15 +247,20 @@ class AppMenuRow extends StatelessWidget {
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: const TextStyle(color: muted, fontSize: 12.5),
+                    style: TextStyle(
+                      fontFamily: aicaFontFamily,
+                      fontFamilyFallback: khmerFontFallback,
+                      color: aicaMuted(context),
+                      fontSize: 12.5,
+                    ),
                   ),
               ],
             ),
           ),
           trailing ??
               (onTap == null
-                  ? const SizedBox.shrink()
-                  : const Icon(Icons.chevron_right, color: muted)),
+                  ? SizedBox.shrink()
+                  : Icon(Icons.chevron_right, color: aicaMuted(context))),
         ],
       ),
     ),
@@ -207,21 +273,28 @@ class InfoRow extends StatelessWidget {
   final String value;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12),
+    padding: EdgeInsets.symmetric(vertical: 12),
     child: Row(
       children: [
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(color: muted, fontSize: 14),
+            style: TextStyle(
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaMuted(context),
+              fontSize: 14,
+            ),
           ),
         ),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: ink,
+            style: TextStyle(
+              fontFamily: aicaFontFamily,
+              fontFamilyFallback: khmerFontFallback,
+              color: aicaInk(context),
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -240,38 +313,39 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (label, icon, color, bg) = switch (status) {
       ViolationStatus.suspected => (
-        'AI suspected',
+        context.l10n.aiSuspected,
         Icons.auto_awesome,
-        blue,
-        const Color(0xFFEAF1FF),
+        aicaBlue(context),
+        aicaTone(context, Color(0xFFEAF1FF)),
       ),
       ViolationStatus.confirmed => (
-        'Confirmed fine',
+        context.l10n.confirmedFine,
         Icons.verified,
-        const Color(0xFFC32632),
-        const Color(0xFFFDEBEC),
+        aicaTone(context, Color(0xFFC32632)),
+        aicaTone(context, Color(0xFFFDEBEC)),
       ),
       ViolationStatus.underReview => (
-        'Under review',
+        context.l10n.underReview,
         Icons.hourglass_top,
-        const Color(0xFF9D6B00),
-        const Color(0xFFFFF4D9),
+        aicaTone(context, Color(0xFF9D6B00)),
+        aicaTone(context, Color(0xFFFFF4D9)),
       ),
       ViolationStatus.disputed => (
-        'Disputed',
+        context.l10n.disputed,
         Icons.forum,
-        const Color(0xFF7542B5),
-        const Color(0xFFF2EAFE),
+        aicaTone(context, Color(0xFF7542B5)),
+        aicaTone(context, Color(0xFFF2EAFE)),
       ),
       ViolationStatus.resolved => (
-        'Resolved',
+        context.l10n.resolved,
         Icons.check_circle,
-        const Color(0xFF188653),
-        const Color(0xFFE5F6EB),
+        aicaTone(context, Color(0xFF188653)),
+        aicaTone(context, Color(0xFFE5F6EB)),
       ),
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      constraints: const BoxConstraints(maxWidth: 130),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(20),
@@ -280,13 +354,17 @@ class StatusBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 13),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+          SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: aicaFontFamily,
+                fontFamilyFallback: khmerFontFallback,
+                color: color,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -304,34 +382,43 @@ class ViolationTile extends StatelessWidget {
   final Violation violation;
   final VoidCallback onTap;
 
-  (IconData, Color, Color) get _visual => switch (violation.id) {
-    'red-light' => (Icons.traffic, blue, const Color(0xFFEAF1FF)),
-    'speeding' => (
-      Icons.speed,
-      const Color(0xFFC32632),
-      const Color(0xFFFDEBEC),
-    ),
-    'helmet' => (
-      Icons.sports_motorsports,
-      const Color(0xFFC32632),
-      const Color(0xFFFDEBEC),
-    ),
-    'parking' => (
-      Icons.local_parking,
-      const Color(0xFF9D6B00),
-      const Color(0xFFFFF4D9),
-    ),
-    'wrong-way' => (
-      Icons.u_turn_left,
-      const Color(0xFF7542B5),
-      const Color(0xFFF2EAFE),
-    ),
-    _ => (Icons.remove_road, const Color(0xFF188653), const Color(0xFFE5F6EB)),
-  };
+  (IconData, Color, Color) _visual(BuildContext context) =>
+      switch (violation.id) {
+        'red-light' => (
+          Icons.traffic,
+          aicaBlue(context),
+          aicaTone(context, Color(0xFFEAF1FF)),
+        ),
+        'speeding' => (
+          Icons.speed,
+          aicaTone(context, Color(0xFFC32632)),
+          aicaTone(context, Color(0xFFFDEBEC)),
+        ),
+        'helmet' => (
+          Icons.sports_motorsports,
+          aicaTone(context, Color(0xFFC32632)),
+          aicaTone(context, Color(0xFFFDEBEC)),
+        ),
+        'parking' => (
+          Icons.local_parking,
+          aicaTone(context, Color(0xFF9D6B00)),
+          aicaTone(context, Color(0xFFFFF4D9)),
+        ),
+        'wrong-way' => (
+          Icons.u_turn_left,
+          aicaTone(context, Color(0xFF7542B5)),
+          aicaTone(context, Color(0xFFF2EAFE)),
+        ),
+        _ => (
+          Icons.remove_road,
+          aicaTone(context, Color(0xFF188653)),
+          aicaTone(context, Color(0xFFE5F6EB)),
+        ),
+      };
 
   @override
   Widget build(BuildContext context) {
-    final (icon, iconColor, iconBackground) = _visual;
+    final (icon, iconColor, iconBackground) = _visual(context);
     return LayoutBuilder(
       builder: (context, constraints) => InkWell(
         onTap: onTap,
@@ -351,43 +438,56 @@ class ViolationTile extends StatelessWidget {
                 ),
                 child: Icon(icon, color: iconColor, size: 22),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      violation.title,
+                      violationTitle(context, violation),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: ink,
+                      style: TextStyle(
+                        fontFamily: aicaFontFamily,
+                        fontFamilyFallback: khmerFontFallback,
+                        color: aicaInk(context),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 3),
+                    SizedBox(height: 3),
                     Text(
                       '${violation.date} · ${violation.location}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: muted, fontSize: 12),
+                      style: TextStyle(
+                        fontFamily: aicaFontFamily,
+                        fontFamilyFallback: khmerFontFallback,
+                        color: aicaMuted(context),
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: 6),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    violation.amount > 0 ? riel(violation.amount) : 'No fine',
+                    violation.amount > 0
+                        ? riel(violation.amount)
+                        : context.l10n.noFine,
                     style: TextStyle(
-                      color: violation.amount > 0 ? ink : muted,
+                      fontFamily: aicaFontFamily,
+                      fontFamilyFallback: khmerFontFallback,
+                      color: violation.amount > 0
+                          ? aicaInk(context)
+                          : aicaMuted(context),
                       fontSize: violation.amount > 0 ? 14 : 11.5,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   StatusBadge(violation.status),
                 ],
               ),
@@ -400,5 +500,7 @@ class ViolationTile extends StatelessWidget {
 }
 
 void showDemoMessage(BuildContext context, String text) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  ScaffoldMessenger.of(context)
+    ..clearSnackBars()
+    ..showSnackBar(SnackBar(content: Text(text)));
 }

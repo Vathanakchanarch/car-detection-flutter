@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+
 import '../data/demo_store.dart';
 import 'home_screen.dart';
 import 'payments_screen.dart';
@@ -20,17 +24,22 @@ class _AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     final pages = [
       HomeScreen(onSelectTab: (index) => setState(() => _tab = index)),
-      const ViolationsScreen(),
-      const PaymentsScreen(),
-      const ProfileScreen(),
+      ViolationsScreen(),
+      PaymentsScreen(),
+      ProfileScreen(),
     ];
-    const icons = [
+    final icons = [
       Icons.home_rounded,
       Icons.shield_outlined,
       Icons.account_balance_wallet_outlined,
       Icons.person_outline,
     ];
-    const labels = ['Home', 'Violations', 'Payments', 'Profile'];
+    final labels = [
+      context.l10n.home,
+      context.l10n.violations,
+      context.l10n.payments,
+      context.l10n.profile,
+    ];
     return PopScope(
       canPop: _tab == 0,
       onPopInvokedWithResult: (didPop, _) {
@@ -40,7 +49,7 @@ class _AppShellState extends State<AppShell> {
         body: SafeArea(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 390),
+              constraints: BoxConstraints(maxWidth: 390),
               child: IndexedStack(index: _tab, children: pages),
             ),
           ),
@@ -50,13 +59,13 @@ class _AppShellState extends State<AppShell> {
           child: Center(
             heightFactor: 1,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 390),
+              constraints: BoxConstraints(maxWidth: 390),
               child: Container(
-                margin: const EdgeInsets.fromLTRB(16, 6, 16, 16),
-                padding: const EdgeInsets.all(6),
+                margin: EdgeInsets.fromLTRB(16, 6, 16, 16),
+                padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: const Color(0xFFC9D5E2)),
+                  color: aicaSurface(context),
+                  border: Border.all(color: aicaBorder(context)),
                   borderRadius: BorderRadius.circular(28),
                 ),
                 child: Row(
@@ -82,7 +91,9 @@ class _AppShellState extends State<AppShell> {
                                   Icon(
                                     icons[index],
                                     size: 23,
-                                    color: selected ? Colors.white : muted,
+                                    color: selected
+                                        ? Colors.white
+                                        : aicaMuted(context),
                                   ),
                                   if (index == 1 &&
                                       !selected &&
@@ -94,10 +105,13 @@ class _AppShellState extends State<AppShell> {
                                         width: 10,
                                         height: 10,
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFFC32632),
+                                          color: aicaTone(
+                                            context,
+                                            Color(0xFFC32632),
+                                          ),
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: Colors.white,
+                                            color: aicaSurface(context),
                                             width: 2,
                                           ),
                                         ),
@@ -106,12 +120,16 @@ class _AppShellState extends State<AppShell> {
                                 ],
                               ),
                               if (selected) ...[
-                                const SizedBox(width: 6),
+                                SizedBox(width: 6),
                                 Flexible(
                                   child: Text(
                                     labels[index],
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
+                                      fontFamily: aicaFontFamily,
+                                      fontFamilyFallback: khmerFontFallback,
                                       color: Colors.white,
                                       fontSize: 12.5,
                                       fontWeight: FontWeight.w700,

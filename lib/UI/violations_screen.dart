@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_data.dart';
 import '../model/violation.dart';
 import 'violation_detail_screen.dart';
@@ -28,47 +33,55 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
         3 => v.status == ViolationStatus.resolved,
         _ => true,
       };
-      final queryMatches = '${v.title} ${v.location} ${v.plate}'
-          .toLowerCase()
-          .contains(_query.toLowerCase());
+      final queryMatches =
+          '${v.title} ${violationTitle(context, v)} ${v.location} ${v.plate}'
+              .toLowerCase()
+              .contains(_query.toLowerCase());
       return statusMatches && queryMatches;
     }).toList();
-    const filters = ['All 6', 'To pay 2', 'In review 3', 'Done 1'];
+    final filters = [
+      context.l10n.all6,
+      context.l10n.toPay2,
+      context.l10n.inReview3,
+      context.l10n.done1,
+    ];
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 32),
+      padding: EdgeInsets.fromLTRB(16, 10, 16, 32),
       children: [
-        const Text(
-          'Violations',
+        Text(
+          context.l10n.violations,
           style: TextStyle(
-            color: ink,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaInk(context),
             fontSize: 20,
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         TextField(
           onChanged: (value) => setState(() => _query = value),
           decoration: InputDecoration(
-            hintText: 'Search plate or location',
-            prefixIcon: const Icon(Icons.search, color: muted),
-            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+            hintText: context.l10n.searchPlateOrLocation,
+            prefixIcon: Icon(Icons.search, color: aicaMuted(context)),
+            contentPadding: EdgeInsets.symmetric(vertical: 14),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: aicaSurface(context),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFFC9D5E2)),
+              borderSide: BorderSide(color: aicaBorder(context)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFFC9D5E2)),
+              borderSide: BorderSide(color: aicaBorder(context)),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.all(4),
+          padding: EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFFC9D5E2).withValues(alpha: .6),
+            color: aicaBorder(context).withValues(alpha: .6),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -83,23 +96,22 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: _filter == index
-                          ? Colors.white
+                          ? aicaSurface(context)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: _filter == index
-                          ? const [
-                              BoxShadow(
-                                color: Color(0x14000000),
-                                blurRadius: 3,
-                              ),
-                            ]
+                          ? [BoxShadow(color: Color(0x14000000), blurRadius: 3)]
                           : null,
                     ),
                     child: Text(
                       filters[index],
                       maxLines: 1,
                       style: TextStyle(
-                        color: _filter == index ? ink : muted,
+                        fontFamily: aicaFontFamily,
+                        fontFamilyFallback: khmerFontFallback,
+                        color: _filter == index
+                            ? aicaInk(context)
+                            : aicaMuted(context),
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -110,18 +122,23 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        const Text(
-          'ⓘ  AI detections are only suspected. A fine exists after official confirmation.',
-          style: TextStyle(color: muted, fontSize: 12),
+        SizedBox(height: 12),
+        Text(
+          context.l10n.aiDetectionsAreOnlySuspectedAFine,
+          style: TextStyle(
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaMuted(context),
+            fontSize: 12,
+          ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         AppPanel(
           padding: EdgeInsets.zero,
           child: visible.isEmpty
-              ? const Padding(
+              ? Padding(
                   padding: EdgeInsets.all(24),
-                  child: Text('No matching violations.'),
+                  child: Text(context.l10n.noMatchingViolations),
                 )
               : Column(
                   children: [
@@ -133,7 +150,7 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
                           ViolationDetailScreen(violation: visible[i]),
                         ),
                       ),
-                      if (i < visible.length - 1) const Divider(height: 1),
+                      if (i < visible.length - 1) Divider(height: 1),
                     ],
                   ],
                 ),

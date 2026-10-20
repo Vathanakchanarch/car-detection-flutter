@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+
 import '../data/demo_store.dart';
 import 'licence_screen.dart';
 import 'settings_screen.dart';
@@ -11,16 +15,12 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   void _showLanguageSheet(BuildContext context) {
-    String selected = 'English';
-    showModalBottomSheet<void>(
+    showMobileBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
+      showDragHandle: false,
       builder: (sheetContext) => StatefulBuilder(
         builder: (context, setSheetState) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+          padding: EdgeInsets.fromLTRB(20, 12, 20, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -30,46 +30,43 @@ class ProfileScreen extends StatelessWidget {
                   width: 40,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFC9D5E2),
+                    color: aicaBorder(context),
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'Choose language',
+              SizedBox(height: 16),
+              Text(
+                context.l10n.chooseLanguage,
                 style: TextStyle(
-                  color: ink,
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
+                  color: aicaInk(context),
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 16),
-              for (final (code, language) in [
-                ('EN', 'English'),
-                ('ខ្ម', 'ខ្មែរ'),
+              SizedBox(height: 16),
+              for (final (iconText, language, languageCode) in [
+                ('EN', 'English', 'en'),
+                ('ខ្ម', 'ខ្មែរ', 'km'),
               ]) ...[
                 InkWell(
                   onTap: () {
-                    setSheetState(() => selected = language);
-                    if (language != 'English') {
-                      showDemoMessage(
-                        context,
-                        'Khmer translation is not included in this demo yet.',
-                      );
-                    }
+                    demoStore.setLanguage(languageCode);
+                    setSheetState(() {});
                   },
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: selected == language
-                          ? const Color(0xFFEAF1FF)
-                          : Colors.white,
+                      color: demoStore.languageCode == languageCode
+                          ? aicaTone(context, Color(0xFFEAF1FF))
+                          : aicaSurface(context),
                       border: Border.all(
-                        color: selected == language
-                            ? blue
-                            : const Color(0xFFC9D5E2),
+                        color: demoStore.languageCode == languageCode
+                            ? aicaBlue(context)
+                            : aicaBorder(context),
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(16),
@@ -85,32 +82,36 @@ class ProfileScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            code,
-                            style: const TextStyle(
+                            iconText,
+                            style: TextStyle(
+                              fontFamily: aicaFontFamily,
+                              fontFamilyFallback: khmerFontFallback,
                               color: Colors.white,
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             language,
-                            style: const TextStyle(
-                              color: ink,
+                            style: TextStyle(
+                              fontFamily: aicaFontFamily,
+                              fontFamilyFallback: khmerFontFallback,
+                              color: aicaInk(context),
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
-                        if (selected == language)
-                          const Icon(Icons.check_circle, color: blue),
+                        if (demoStore.languageCode == languageCode)
+                          Icon(Icons.check_circle, color: aicaBlue(context)),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
               ],
             ],
           ),
@@ -123,34 +124,38 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: demoStore,
     builder: (context, _) => ListView(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 32),
+      padding: EdgeInsets.fromLTRB(16, 10, 16, 32),
       children: [
-        const Text(
-          'Profile',
+        Text(
+          context.l10n.profile,
           style: TextStyle(
-            color: ink,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaInk(context),
             fontSize: 20,
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         AppPanel(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 32,
                 backgroundColor: ink,
                 child: Text(
                   'SV',
                   style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: 19,
                   ),
                 ),
               ),
-              const SizedBox(width: 15),
+              SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,8 +164,10 @@ class ProfileScreen extends StatelessWidget {
                       demoStore.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: ink,
+                      style: TextStyle(
+                        fontFamily: aicaFontFamily,
+                        fontFamilyFallback: khmerFontFallback,
+                        color: aicaInk(context),
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                       ),
@@ -169,22 +176,29 @@ class ProfileScreen extends StatelessWidget {
                       '+855 ${demoStore.phone}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: muted, fontSize: 13),
+                      style: TextStyle(
+                        fontFamily: aicaFontFamily,
+                        fontFamilyFallback: khmerFontFallback,
+                        color: aicaMuted(context),
+                        fontSize: 13,
+                      ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 3),
-                      padding: const EdgeInsets.symmetric(
+                      margin: EdgeInsets.only(top: 3),
+                      padding: EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE5F6EB),
+                        color: aicaTone(context, Color(0xFFE5F6EB)),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Text(
-                        '✓ Phone verified',
+                      child: Text(
+                        context.l10n.phoneVerified,
                         style: TextStyle(
-                          color: Color(0xFF188653),
+                          fontFamily: aicaFontFamily,
+                          fontFamilyFallback: khmerFontFallback,
+                          color: aicaTone(context, Color(0xFF188653)),
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),
@@ -196,112 +210,118 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        const Text(
-          'MY ACCOUNT',
+        SizedBox(height: 24),
+        Text(
+          context.l10n.myAccount,
           style: TextStyle(
-            color: muted,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaMuted(context),
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         AppPanel(
           padding: EdgeInsets.zero,
           child: Column(
             children: [
               _MenuRow(
                 Icons.person_outline,
-                'Personal information',
-                () => openPage(context, const PersonalInfoScreen()),
+                context.l10n.personalInformation,
+                () => openPage(context, PersonalInfoScreen()),
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               _MenuRow(
                 Icons.directions_car_outlined,
-                'My vehicles',
-                () => openPage(context, const VehiclesScreen()),
-                subtitle: '2 registered',
+                context.l10n.myVehicles,
+                () => openPage(context, VehiclesScreen()),
+                subtitle: context.l10n.label2Registered,
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               _MenuRow(
                 Icons.badge_outlined,
-                'Driving licence',
-                () => openPage(context, const LicenceScreen()),
+                context.l10n.drivingLicenceLabelAlt,
+                () => openPage(context, LicenceScreen()),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        const Text(
-          'SETTINGS',
+        SizedBox(height: 24),
+        Text(
+          context.l10n.settingsLabel,
           style: TextStyle(
-            color: muted,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaMuted(context),
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         AppPanel(
           padding: EdgeInsets.zero,
           child: Column(
             children: [
               _MenuRow(
                 Icons.translate,
-                'Language',
+                context.l10n.language,
                 () => _showLanguageSheet(context),
-                subtitle: 'English',
+                subtitle: demoStore.languageName,
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               AppMenuRow(
                 icon: Icons.dark_mode_outlined,
-                label: 'Dark mode',
+                label: context.l10n.darkMode,
                 trailing: Switch(
-                  value: false,
-                  onChanged: (_) => showDemoMessage(
-                    context,
-                    'Dark mode is not part of this Flutter demo yet.',
-                  ),
+                  value: demoStore.darkMode,
+                  onChanged: demoStore.setDarkMode,
                 ),
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               _MenuRow(
                 Icons.notifications_none,
-                'Notification preferences',
-                () => openPage(context, const NotificationPreferencesScreen()),
+                context.l10n.notificationPreferences,
+                () => openPage(context, NotificationPreferencesScreen()),
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               _MenuRow(
                 Icons.lock_outline,
-                'Privacy & security',
-                () => openPage(context, const PrivacyScreen()),
+                context.l10n.privacySecurity,
+                () => openPage(context, PrivacyScreen()),
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               _MenuRow(
                 Icons.help_outline,
-                'Help & support',
-                () => openPage(context, const HelpScreen()),
+                context.l10n.helpSupport,
+                () => openPage(context, HelpScreen()),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         FilledButton.icon(
           onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute<void>(builder: (_) => const SignInScreen()),
+            MaterialPageRoute<void>(builder: (_) => SignInScreen()),
             (_) => false,
           ),
-          icon: const Icon(Icons.logout),
-          label: const Text('Log out'),
+          icon: Icon(Icons.logout),
+          label: Text(context.l10n.logOut),
           style: FilledButton.styleFrom(
-            backgroundColor: const Color(0xFFFDEBEC),
-            foregroundColor: const Color(0xFFC32632),
+            backgroundColor: aicaTone(context, Color(0xFFFDEBEC)),
+            foregroundColor: aicaTone(context, Color(0xFFC32632)),
           ),
         ),
-        const SizedBox(height: 16),
-        const Text(
-          'Cambodia Smart Traffic · v1.0.0 (demo)',
+        SizedBox(height: 16),
+        Text(
+          context.l10n.cambodiaSmartTrafficV100Demo,
           textAlign: TextAlign.center,
-          style: TextStyle(color: muted, fontSize: 12),
+          style: TextStyle(
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaMuted(context),
+            fontSize: 12,
+          ),
         ),
       ],
     ),

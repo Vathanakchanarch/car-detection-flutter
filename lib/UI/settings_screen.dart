@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
+import '../l10n/l10n_context.dart';
+import '../l10n/demo_labels.dart';
+
 import '../data/demo_store.dart';
+import '../data/permissions/notification_permission_service.dart';
 import 'widgets/app_components.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
@@ -22,59 +28,67 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'Personal information',
+    title: context.l10n.personalInformation,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'Full name',
+        Text(
+          context.l10n.fullName,
           style: TextStyle(
-            color: ink,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaInk(context),
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 7),
+        SizedBox(height: 7),
         TextField(
           controller: _name,
-          decoration: const InputDecoration(border: OutlineInputBorder()),
+          decoration: InputDecoration(border: OutlineInputBorder()),
         ),
-        const SizedBox(height: 16),
-        const Text(
-          'Phone',
+        SizedBox(height: 16),
+        Text(
+          context.l10n.phone,
           style: TextStyle(
-            color: ink,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaInk(context),
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 7),
+        SizedBox(height: 7),
         Container(
           height: 56,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: const Color(0xFFC9D5E2)),
+            color: aicaSurface(context),
+            border: Border.all(color: aicaBorder(context)),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
             children: [
-              const Text(
+              Text(
                 '+855',
                 style: TextStyle(
-                  color: ink,
+                  fontFamily: aicaFontFamily,
+                  fontFamilyFallback: khmerFontFallback,
+                  color: aicaInk(context),
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(width: 12),
-              Container(width: 1, height: 24, color: const Color(0xFFC9D5E2)),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
+              Container(width: 1, height: 24, color: aicaBorder(context)),
+              SizedBox(width: 12),
               Flexible(
                 child: Text(
                   demoStore.phone,
-                  style: const TextStyle(
-                    color: ink,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaInk(context),
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -83,35 +97,37 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        const Text(
-          'Email (optional)',
+        SizedBox(height: 16),
+        Text(
+          context.l10n.emailOptional,
           style: TextStyle(
-            color: ink,
+            fontFamily: aicaFontFamily,
+            fontFamilyFallback: khmerFontFallback,
+            color: aicaInk(context),
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 7),
+        SizedBox(height: 7),
         TextField(
           controller: _email,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'name@example.com',
             border: OutlineInputBorder(),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         FilledButton(
           onPressed: () {
             if (_name.text.trim().isEmpty) {
-              showDemoMessage(context, 'Please enter your name.');
+              showDemoMessage(context, context.l10n.pleaseEnterYourName);
               return;
             }
             demoStore.setProfile(_name.text.trim(), _email.text.trim());
-            showDemoMessage(context, 'Demo profile saved locally.');
+            showDemoMessage(context, context.l10n.demoProfileSavedLocally);
           },
-          child: const Text('Save changes'),
+          child: Text(context.l10n.saveChanges),
         ),
       ],
     ),
@@ -125,30 +141,28 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  String selected = 'English';
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'Language',
+    title: context.l10n.language,
     child: AppPanel(
       child: Column(
         children: [
-          for (final language in ['English', 'ខ្មែរ'])
+          for (final (language, languageCode) in [
+            ('English', 'en'),
+            ('ខ្មែរ', 'km'),
+          ])
             ListTile(
               title: Text(language),
               trailing: Icon(
-                selected == language
+                demoStore.languageCode == languageCode
                     ? Icons.radio_button_checked
                     : Icons.radio_button_unchecked,
-                color: blue,
+                color: aicaBlue(context),
               ),
               onTap: () {
-                setState(() => selected = language);
-                if (selected != 'English') {
-                  showDemoMessage(
-                    context,
-                    'Khmer translation is not included in this demo yet.',
-                  );
-                }
+                setState(() {
+                  demoStore.setLanguage(languageCode);
+                });
               },
             ),
         ],
@@ -158,27 +172,143 @@ class _LanguageScreenState extends State<LanguageScreen> {
 }
 
 class NotificationPreferencesScreen extends StatefulWidget {
-  const NotificationPreferencesScreen({super.key});
+  const NotificationPreferencesScreen({
+    super.key,
+    this.permissionService = const NotificationPermissionService(),
+  });
+
+  final NotificationPermissionService permissionService;
+
   @override
   State<NotificationPreferencesScreen> createState() =>
       _NotificationPreferencesScreenState();
 }
 
 class _NotificationPreferencesScreenState
-    extends State<NotificationPreferencesScreen> {
+    extends State<NotificationPreferencesScreen>
+    with WidgetsBindingObserver {
+  NotificationPermissionState? _permissionState;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _refreshPermissionStatus();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshPermissionStatus();
+    }
+  }
+
+  Future<void> _refreshPermissionStatus() async {
+    if (!widget.permissionService.isSupported) return;
+    final status = await widget.permissionService.getStatus();
+    if (mounted) setState(() => _permissionState = status);
+  }
+
+  Future<void> _handlePermissionAction() async {
+    if (_permissionState == NotificationPermissionState.granted) return;
+
+    if (_permissionState == NotificationPermissionState.permanentlyDenied) {
+      final opened = await widget.permissionService.openSettings();
+      if (!opened && mounted) {
+        showDemoMessage(context, context.l10n.unableToOpenAppSettings);
+      }
+      return;
+    }
+
+    final status = await widget.permissionService.requestPermission();
+    if (!mounted) return;
+    setState(() => _permissionState = status);
+
+    switch (status) {
+      case NotificationPermissionState.granted:
+        showDemoMessage(context, context.l10n.notificationsAreAllowed);
+      case NotificationPermissionState.denied:
+        showDemoMessage(
+          context,
+          context.l10n.notificationPermissionWasNotAllowedTheApp,
+        );
+      case NotificationPermissionState.permanentlyDenied:
+        showDemoMessage(
+          context,
+          context.l10n.notificationsAreDisabledYouCanEnableThem,
+        );
+    }
+  }
+
+  String get _permissionSubtitle => switch (_permissionState) {
+    NotificationPermissionState.granted => context.l10n.allowed,
+    NotificationPermissionState.denied => context.l10n.notAllowed,
+    NotificationPermissionState.permanentlyDenied =>
+      context.l10n.enableFromAndroidAppSettings,
+    null =>
+      widget.permissionService.isSupported
+          ? context.l10n.checkingPermission
+          : context.l10n.availableOnAndroid,
+  };
+
+  Widget get _permissionAction => switch (_permissionState) {
+    NotificationPermissionState.granted => Icon(
+      Icons.check_circle,
+      color: aicaTone(context, Color(0xFF188653)),
+    ),
+    NotificationPermissionState.permanentlyDenied => Text(
+      context.l10n.settings,
+      style: TextStyle(
+        fontFamily: aicaFontFamily,
+        fontFamilyFallback: khmerFontFallback,
+        color: aicaBlue(context),
+      ),
+    ),
+    NotificationPermissionState.denied => Text(
+      context.l10n.enable,
+      style: TextStyle(
+        fontFamily: aicaFontFamily,
+        fontFamilyFallback: khmerFontFallback,
+        color: aicaBlue(context),
+      ),
+    ),
+    null =>
+      !widget.permissionService.isSupported
+          ? const SizedBox.shrink()
+          : SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+  };
+
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'Notification preferences',
+    title: context.l10n.notificationPreferences,
     child: AppPanel(
       padding: EdgeInsets.zero,
       child: Column(
         children: [
+          AppMenuRow(
+            icon: Icons.notifications_active_outlined,
+            label: context.l10n.deviceNotifications,
+            subtitle: _permissionSubtitle,
+            trailing: _permissionAction,
+            onTap: _permissionState == null ? null : _handlePermissionAction,
+          ),
+          Divider(height: 1),
           for (final (index, key)
               in demoStore.notificationPreferences.keys.indexed) ...[
-            if (index > 0) const Divider(height: 1),
+            if (index > 0) Divider(height: 1),
             AppMenuRow(
               icon: Icons.notifications_none,
-              label: key,
+              label: notificationPreferenceLabel(context, key),
               trailing: Switch(
                 value: demoStore.notificationPreferences[key]!,
                 onChanged: (value) =>
@@ -203,7 +333,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'Privacy & security',
+    title: context.l10n.privacySecurity,
     child: Column(
       children: [
         AppPanel(
@@ -212,63 +342,70 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
             children: [
               AppMenuRow(
                 icon: Icons.fingerprint,
-                label: 'Biometric unlock',
+                label: context.l10n.biometricUnlock,
                 trailing: Switch(
                   value: _biometricPreview,
                   onChanged: (value) {
                     setState(() => _biometricPreview = value);
                     showDemoMessage(
                       context,
-                      'Biometric unlock is a visual demo only.',
+                      context.l10n.biometricUnlockIsAVisualDemoOnly,
                     );
                   },
                 ),
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               AppMenuRow(
                 icon: Icons.password,
-                label: 'Change app PIN',
+                label: context.l10n.changeAppPin,
                 onTap: () => showDemoMessage(
                   context,
-                  'App PIN is not configured in this demo.',
+                  context.l10n.appPinIsNotConfiguredInThis,
                 ),
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               AppMenuRow(
                 icon: Icons.download,
-                label: 'Download my data',
-                onTap: () =>
-                    showDemoMessage(context, 'Data export needs a backend.'),
+                label: context.l10n.downloadMyData,
+                onTap: () => showDemoMessage(
+                  context,
+                  context.l10n.dataExportNeedsABackend,
+                ),
               ),
-              const Divider(height: 1),
+              Divider(height: 1),
               AppMenuRow(
                 icon: Icons.delete_outline,
-                label: 'Delete account',
+                label: context.l10n.deleteAccount,
                 danger: true,
                 onTap: () => showDemoMessage(
                   context,
-                  'Account deletion needs a backend.',
+                  context.l10n.accountDeletionNeedsABackend,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFEAF1FF),
+            color: aicaTone(context, Color(0xFFEAF1FF)),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.lock, color: blue, size: 20),
+              Icon(Icons.lock, color: aicaBlue(context), size: 20),
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Your data is used only to show your own records.',
-                  style: TextStyle(color: blue, fontSize: 13),
+                  context.l10n.yourDataIsUsedOnlyToShow,
+                  style: TextStyle(
+                    fontFamily: aicaFontFamily,
+                    fontFamilyFallback: khmerFontFallback,
+                    color: aicaBlue(context),
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ],
@@ -283,35 +420,35 @@ class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
   @override
   Widget build(BuildContext context) => DetailPage(
-    title: 'Help & support',
+    title: context.l10n.helpSupport,
     child: AppPanel(
       padding: EdgeInsets.zero,
       child: Column(
         children: [
           AppMenuRow(
             icon: Icons.quiz_outlined,
-            label: 'FAQs',
+            label: context.l10n.faqs,
             onTap: () => showDemoMessage(
               context,
-              'FAQs are not connected in this demo.',
+              context.l10n.faqsAreNotConnectedInThisDemo,
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1),
           AppMenuRow(
             icon: Icons.call_outlined,
-            label: 'Call support',
-            subtitle: 'Demo number',
+            label: context.l10n.callSupport,
+            subtitle: context.l10n.demoNumber,
             onTap: () => showDemoMessage(
               context,
-              'Support number is a demo placeholder.',
+              context.l10n.supportNumberIsADemoPlaceholder,
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1),
           AppMenuRow(
             icon: Icons.chat_outlined,
-            label: 'Chat with us',
+            label: context.l10n.chatWithUs,
             onTap: () =>
-                showDemoMessage(context, 'Chat support needs a backend.'),
+                showDemoMessage(context, context.l10n.chatSupportNeedsABackend),
           ),
         ],
       ),
