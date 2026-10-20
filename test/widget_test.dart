@@ -1,39 +1,185 @@
-import 'package:car_detection/main.dart';
 import 'package:car_detection/UI/app_shell.dart';
+import 'package:car_detection/UI/appeal_screen.dart';
+import 'package:car_detection/UI/onboarding_screen.dart';
+import 'package:car_detection/UI/payments_screen.dart';
+import 'package:car_detection/UI/sign_in_screen.dart';
+import 'package:car_detection/UI/vehicles_screen.dart';
+import 'package:car_detection/UI/verify_screen.dart';
+import 'package:car_detection/UI/violations_screen.dart';
+import 'package:car_detection/data/demo_data.dart';
+import 'package:car_detection/data/demo_store.dart';
+import 'package:car_detection/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('onboarding leads to phone sign in', (tester) async {
-    await tester.pumpWidget(const SmartTrafficApp());
+  setUp(demoStore.reset);
+
+  testWidgets('onboarding Next advances the PageView', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+
     expect(find.text('Smart traffic monitoring'), findsOneWidget);
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Instant violation notifications'), findsOneWidget);
+  });
+
+  testWidgets('onboarding Skip opens sign in', (tester) async {
+    await tester.pumpWidget(const SmartTrafficApp());
 
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     expect(find.text('Welcome back'), findsOneWidget);
+  });
 
-    await tester.enterText(find.byType(TextField), '12345678');
+  testWidgets('sign in rejects an invalid phone number', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: SignInScreen()));
+
+    await tester.enterText(find.byType(TextField), '123');
     await tester.tap(find.text('Send code'));
-    await tester.pumpAndSettle();
-    expect(find.text('Verify your number'), findsOneWidget);
+    await tester.pump();
+
+    expect(find.text('Enter a valid Cambodian phone number.'), findsOneWidget);
+  });
+
+  testWidgets('OTP rejects an invalid code and accepts 123456', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: VerifyScreen(phone: '12345678')),
+    );
+
+    final otpField = tester.widget<TextField>(find.byType(TextField));
+    expect(otpField.decoration?.filled, isFalse);
+    expect(otpField.decoration?.enabledBorder, InputBorder.none);
+    expect(otpField.decoration?.focusedBorder, InputBorder.none);
+
+    await tester.enterText(find.byType(TextField), '000000');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('Use the demo code 123456.'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), '123456');
-    await tester.pump();
-    await tester.tap(find.text('Verify & continue'));
+    await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pumpAndSettle();
-    expect(find.text('Sophea Vann'), findsWidgets);
     expect(find.text('Recent alerts'), findsOneWidget);
   });
 
-  testWidgets('violations can be filtered to payable fines', (tester) async {
+  testWidgets('main navigation switches tabs and Back returns Home', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: AppShell()));
+
     await tester.tap(find.byIcon(Icons.shield_outlined));
     await tester.pumpAndSettle();
     expect(find.text('Violations'), findsWidgets);
 
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Recent alerts'), findsOneWidget);
+  });
+
+  testWidgets('violation search matches title, plate, and location', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: ViolationsScreen())),
+    );
+
+    await tester.enterText(find.byType(TextField), 'Monivong');
+    await tester.pump();
+
+    expect(find.text('No helmet'), findsOneWidget);
+    expect(find.text('Speeding (68 km/h in 50 zone)'), findsNothing);
+  });
+
+  testWidgets('violation filters show only payable fines', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: ViolationsScreen())),
+    );
+
     await tester.tap(find.text('To pay 2'));
     await tester.pumpAndSettle();
+
     expect(find.text('Speeding (68 km/h in 50 zone)'), findsOneWidget);
     expect(find.text('Possible red-light violation'), findsNothing);
+  });
+
+  testWidgets('selected violation opens its own details', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: ViolationsScreen())),
+    );
+
+    await tester.tap(find.text('Possible red-light violation'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('DEMO-AI-20261014-017'), findsOneWidget);
+    expect(find.text('2AB-1234'), findsOneWidget);
+    expect(find.textContaining('AI-suspected only'), findsOneWidget);
+  });
+
+  testWidgets('selected vehicle opens its own details', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: VehiclesScreen()));
+
+    await tester.tap(find.text('Toyota Prius 2018'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Pearl white'), findsOneWidget);
+    expect(find.text('30 Jun 2027'), findsOneWidget);
+    expect(find.text('Honda Click 125i'), findsNothing);
+  });
+
+  testWidgets('demo payment updates local paid state and receipt view', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: PaymentsScreen())),
+    );
+
+    await tester.tap(find.text('Pay 180,000 ៛'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Demo simulation'));
+    await tester.tap(find.text('Demo simulation'));
+    await tester.pump();
+    await tester.tap(find.text('Pay 180,000 ៛'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Confirm demo'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('180,000 ៛ marked paid'), findsOneWidget);
+    expect(demoStore.paidFineIds, containsAll(['speeding', 'helmet']));
+  });
+
+  testWidgets('appeal submission persists and shows success', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(home: AppealScreen(violation: demoViolations.first)),
+    );
+
+    await tester.tap(find.text('Signal was green'));
+    await tester.tap(find.text('Submit appeal'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Appeal submitted'), findsOneWidget);
+    expect(find.text('Your demo appeal was saved locally.'), findsOneWidget);
+    expect(demoStore.appeals['red-light'], 'Signal was green');
+  });
+
+  testWidgets('logout clears protected navigation history', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: AppShell()));
+
+    await tester.tap(find.byIcon(Icons.person_outline));
+    await tester.pumpAndSettle();
+    await tester.dragUntilVisible(
+      find.text('Log out'),
+      find.byType(ListView).last,
+      const Offset(0, -300),
+    );
+    await tester.tap(find.text('Log out'));
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome back'), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome back'), findsOneWidget);
+    expect(find.text('Profile'), findsNothing);
   });
 }

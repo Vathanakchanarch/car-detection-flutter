@@ -45,51 +45,67 @@ class ViolationDetailScreen extends StatelessWidget {
               context,
               'Video evidence is a demo placeholder.',
             ),
-            child: Container(
-              height: 235,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF10253C), Color(0xFF25446D)],
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Stack(
-                children: [
-                  const Center(
-                    child: Icon(
-                      Icons.play_circle_fill_rounded,
-                      color: Colors.white,
-                      size: 66,
-                    ),
+            child: AspectRatio(
+              aspectRatio: 16 / 10,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF10253C), Color(0xFF25446D)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                  Positioned(
-                    left: 14,
-                    top: 12,
-                    child: Text(
-                      '● CAM-017',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 12,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Stack(
+                  children: [
+                    const Positioned.fill(
+                      child: CustomPaint(painter: _EvidencePainter()),
+                    ),
+                    const Center(
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Color(0xEFFFFFFF),
+                        child: Icon(
+                          Icons.play_arrow_rounded,
+                          color: ink,
+                          size: 34,
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 14,
-                    bottom: 12,
-                    child: Text(
-                      '${violation.date} ${violation.time}:07',
-                      style: const TextStyle(color: Colors.white, fontSize: 11),
+                    Positioned(
+                      left: 14,
+                      top: 12,
+                      child: Text(
+                        '●  CAM-017',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
-                  ),
-                  const Positioned(
-                    right: 14,
-                    bottom: 12,
-                    child: Text(
-                      'DEMO PLACEHOLDER',
-                      style: TextStyle(color: Colors.white, fontSize: 10),
+                    Positioned(
+                      left: 14,
+                      bottom: 12,
+                      child: Text(
+                        '${violation.date} ${violation.time}:07',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    const Positioned(
+                      right: 14,
+                      bottom: 12,
+                      child: Text(
+                        'DEMO PLACEHOLDER',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -122,7 +138,7 @@ class ViolationDetailScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -138,7 +154,7 @@ class ViolationDetailScreen extends StatelessWidget {
               StatusBadge(violation.status),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           FilledButton.tonalIcon(
             onPressed: () => showModalBottomSheet<void>(
               context: context,
@@ -179,7 +195,7 @@ class ViolationDetailScreen extends StatelessWidget {
             icon: const Icon(Icons.help_outline),
             label: const Text('Explain this violation'),
           ),
-          const SizedBox(height: 26),
+          const SizedBox(height: 24),
           const SectionTitle('Incident'),
           AppPanel(
             child: Column(
@@ -195,26 +211,56 @@ class ViolationDetailScreen extends StatelessWidget {
           const SizedBox(height: 24),
           const SectionTitle('Vehicle'),
           AppPanel(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'CAMBODIA · ព្រះរាជាណាចក្រកម្ពុជា',
-                  style: TextStyle(color: blue, fontSize: 11),
-                ),
-                Text(
-                  violation.plate,
-                  style: const TextStyle(
-                    color: ink,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: ink, width: 2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'CAMBODIA · ព្រះរាជាណាចក្រកម្ពុជា',
+                            style: TextStyle(
+                              color: blue,
+                              fontSize: 6,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            violation.plate,
+                            style: const TextStyle(
+                              color: ink,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                Text(
-                  violation.plate == '2AB-1234'
-                      ? 'Toyota Prius'
-                      : 'Honda Click 125i',
-                  style: const TextStyle(color: muted),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    violation.plate == '2AB-1234'
+                        ? 'Toyota Prius'
+                        : 'Honda Click 125i',
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(color: muted, fontSize: 13),
+                  ),
                 ),
               ],
             ),
@@ -234,13 +280,63 @@ class ViolationDetailScreen extends StatelessWidget {
                       InfoRow('Total', riel(violation.amount)),
                     ],
                   )
-                : const Text(
-                    'No official fine has been issued for this event.',
-                    style: TextStyle(color: muted),
+                : const Row(
+                    children: [
+                      Icon(
+                        Icons.gpp_maybe_outlined,
+                        color: Color(0xFF9D6B00),
+                        size: 26,
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'No official fine has been issued for this event.',
+                          style: TextStyle(color: muted, fontSize: 14),
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ],
       ),
     );
   }
+}
+
+class _EvidencePainter extends CustomPainter {
+  const _EvidencePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final road = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(size.width * .38, size.height * .48)
+      ..lineTo(size.width * .62, size.height * .48)
+      ..lineTo(size.width, size.height)
+      ..close();
+    canvas.drawPath(road, Paint()..color = const Color(0xFF0D1623));
+    canvas.drawLine(
+      Offset(size.width / 2, size.height * .5),
+      Offset(size.width / 2, size.height),
+      Paint()
+        ..color = Colors.white38
+        ..strokeWidth = 2,
+    );
+    final vehicle = RRect.fromRectAndRadius(
+      Rect.fromLTWH(size.width * .55, size.height * .60, 52, 30),
+      const Radius.circular(6),
+    );
+    canvas.drawRRect(vehicle, Paint()..color = const Color(0xFFD9E2EC));
+    canvas.drawRect(
+      Rect.fromLTWH(size.width * .52, size.height * .54, 70, 52),
+      Paint()
+        ..color = Colors.transparent
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..color = const Color(0xFFF59E0B),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -40,16 +40,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     body: SafeArea(
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
+          constraints: const BoxConstraints(maxWidth: 390),
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: _openSignIn,
-                  child: const Text(
-                    'Skip',
-                    style: TextStyle(color: Color(0xFF586A7C)),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 12, 0),
+                child: SizedBox(
+                  height: 44,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _openSignIn,
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF526579),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        textStyle: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      child: const Text('Skip'),
+                    ),
                   ),
                 ),
               ),
@@ -60,28 +71,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPageChanged: (index) => setState(() => _index = index),
                   itemBuilder: (context, index) {
                     final page = onboardingPages[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TrafficIllustration(
-                            artwork: page.artwork,
-                            backgroundColor: page.backgroundColor,
+                    return LayoutBuilder(
+                      builder: (context, constraints) => SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
                           ),
-                          const SizedBox(height: 32),
-                          Text(
-                            page.title,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.headlineMedium,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TrafficIllustration(
+                                artwork: page.artwork,
+                                backgroundColor: page.backgroundColor,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                page.title,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                page.description,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 14),
-                          Text(
-                            page.description,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   },
@@ -98,16 +118,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       color: selected
-                          ? const Color(0xFF2864E9)
-                          : const Color(0xFFE2E8F0),
+                          ? const Color(0xFF2563EB)
+                          : const Color(0xFFC9D5E2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   );
                 }),
               ),
-              const SizedBox(height: 26),
+              const SizedBox(height: 24),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 36),
                 child: FilledButton.icon(
                   onPressed: _next,
                   icon: Icon(

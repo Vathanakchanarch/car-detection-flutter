@@ -30,70 +30,76 @@ class _AppShellState extends State<AppShell> {
       Icons.person_outline,
     ];
     const labels = ['Home', 'Violations', 'Payments', 'Profile'];
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: IndexedStack(index: _tab, children: pages),
+    return PopScope(
+      canPop: _tab == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _tab != 0) setState(() => _tab = 0);
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 390),
+              child: IndexedStack(index: _tab, children: pages),
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Center(
-          heightFactor: 1,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(16, 6, 16, 8),
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: const Color(0xFFE2E8EF)),
-                borderRadius: BorderRadius.circular(28),
-              ),
-              child: Row(
-                children: List.generate(4, (index) {
-                  final selected = _tab == index;
-                  return Expanded(
-                    child: InkWell(
-                      onTap: () => setState(() => _tab = index),
-                      borderRadius: BorderRadius.circular(22),
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: selected ? blue : Colors.transparent,
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              icons[index],
-                              size: 21,
-                              color: selected ? Colors.white : muted,
-                            ),
-                            if (selected) ...[
-                              const SizedBox(width: 6),
-                              Flexible(
-                                child: Text(
-                                  labels[index],
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Center(
+            heightFactor: 1,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 390),
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(16, 6, 16, 16),
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: const Color(0xFFC9D5E2)),
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                child: Row(
+                  children: List.generate(4, (index) {
+                    final selected = _tab == index;
+                    return Expanded(
+                      child: InkWell(
+                        onTap: () => setState(() => _tab = index),
+                        borderRadius: BorderRadius.circular(22),
+                        child: Container(
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: selected ? ink : Colors.transparent,
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                icons[index],
+                                size: 21,
+                                color: selected ? Colors.white : muted,
+                              ),
+                              if (selected) ...[
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    labels[index],
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
             ),
           ),

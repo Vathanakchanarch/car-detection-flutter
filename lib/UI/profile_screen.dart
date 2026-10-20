@@ -14,18 +14,19 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: demoStore,
     builder: (context, _) => ListView(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 32),
       children: [
         const Text(
           'Profile',
           style: TextStyle(
             color: ink,
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         AppPanel(
+          padding: const EdgeInsets.all(20),
           child: Row(
             children: [
               const CircleAvatar(
@@ -54,18 +55,33 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   Text(
                     '+855 ${demoStore.phone}',
-                    style: const TextStyle(color: muted),
+                    style: const TextStyle(color: muted, fontSize: 13),
                   ),
-                  const Text(
-                    '● Phone verified',
-                    style: TextStyle(color: Color(0xFF188653), fontSize: 12),
+                  Container(
+                    margin: const EdgeInsets.only(top: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE5F6EB),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      '✓ Phone verified',
+                      style: TextStyle(
+                        color: Color(0xFF188653),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ),
-        const SizedBox(height: 26),
+        const SizedBox(height: 24),
         const Text(
           'MY ACCOUNT',
           style: TextStyle(
@@ -100,7 +116,7 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 26),
+        const SizedBox(height: 24),
         const Text(
           'SETTINGS',
           style: TextStyle(
@@ -121,12 +137,35 @@ class ProfileScreen extends StatelessWidget {
                 subtitle: 'English',
               ),
               const Divider(height: 1),
-              _MenuRow(
-                Icons.dark_mode_outlined,
-                'Dark mode',
-                () => showDemoMessage(
-                  context,
-                  'Dark mode is not part of this Flutter demo yet.',
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 2,
+                ),
+                leading: Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEAF1FF),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.dark_mode_outlined, color: blue),
+                ),
+                title: const Text(
+                  'Dark mode',
+                  style: TextStyle(
+                    color: ink,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                trailing: Switch(
+                  value: false,
+                  onChanged: (_) => showDemoMessage(
+                    context,
+                    'Dark mode is not part of this Flutter demo yet.',
+                  ),
                 ),
               ),
               const Divider(height: 1),
@@ -150,14 +189,18 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 22),
-        OutlinedButton.icon(
+        const SizedBox(height: 24),
+        FilledButton.icon(
           onPressed: () => Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute<void>(builder: (_) => const SignInScreen()),
             (_) => false,
           ),
           icon: const Icon(Icons.logout),
           label: const Text('Log out'),
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFFFDEBEC),
+            foregroundColor: const Color(0xFFC32632),
+          ),
         ),
         const SizedBox(height: 16),
         const Text(
@@ -179,18 +222,23 @@ class _MenuRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
     leading: Container(
-      width: 42,
-      height: 42,
+      width: 44,
+      height: 44,
       decoration: BoxDecoration(
         color: const Color(0xFFEAF1FF),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Icon(icon, color: blue),
     ),
     title: Text(
       label,
-      style: const TextStyle(color: ink, fontWeight: FontWeight.w600),
+      style: const TextStyle(
+        color: ink,
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+      ),
     ),
     subtitle: subtitle == null ? null : Text(subtitle!),
     trailing: const Icon(Icons.chevron_right, color: muted),

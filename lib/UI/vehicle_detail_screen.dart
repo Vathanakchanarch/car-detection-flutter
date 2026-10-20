@@ -19,7 +19,8 @@ class VehicleDetailScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: ink,
-            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: const Color(0xFFC9D5E2)),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
             children: [
@@ -28,18 +29,18 @@ class VehicleDetailScreen extends StatelessWidget {
                     ? Icons.directions_car
                     : Icons.two_wheeler,
                 color: Colors.white,
-                size: 38,
+                size: 44,
               ),
               const SizedBox(height: 10),
               Text(
                 vehicle.name,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 18,
@@ -88,13 +89,10 @@ class VehicleDetailScreen extends StatelessWidget {
         const SectionTitle('Verification'),
         const AppPanel(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('🟢  Submitted', style: TextStyle(color: ink)),
-              SizedBox(height: 18),
-              Text('🟢  Matched to registry', style: TextStyle(color: ink)),
-              SizedBox(height: 18),
-              Text('🟢  Verified', style: TextStyle(color: ink)),
+              _VerificationStep('Submitted'),
+              _VerificationStep('Matched to registry'),
+              _VerificationStep('Verified', last: true),
             ],
           ),
         ),
@@ -119,5 +117,42 @@ class VehicleDetailScreen extends StatelessWidget {
         ),
       ],
     ),
+  );
+}
+
+class _VerificationStep extends StatelessWidget {
+  const _VerificationStep(this.label, {this.last = false});
+
+  final String label;
+  final bool last;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Column(
+        children: [
+          const CircleAvatar(
+            radius: 12,
+            backgroundColor: Color(0xFF188653),
+            child: Icon(Icons.check, color: Colors.white, size: 16),
+          ),
+          if (!last)
+            Container(width: 2, height: 24, color: const Color(0xFF188653)),
+        ],
+      ),
+      const SizedBox(width: 12),
+      Padding(
+        padding: const EdgeInsets.only(top: 2),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: ink,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ],
   );
 }

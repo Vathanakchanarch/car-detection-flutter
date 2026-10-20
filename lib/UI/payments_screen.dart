@@ -13,17 +13,17 @@ class PaymentsScreen extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: demoStore,
     builder: (context, _) => ListView(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 32),
       children: [
         const Text(
           'Payments',
           style: TextStyle(
             color: ink,
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 12),
         Row(
           children: [
             const Expanded(child: SectionTitle('Fines to pay')),
@@ -45,12 +45,20 @@ class PaymentsScreen extends StatelessWidget {
                     for (var i = 0; i < demoStore.payable.length; i++) ...[
                       Row(
                         children: [
-                          Checkbox(
-                            value: demoStore.selectedFineIds.contains(
-                              demoStore.payable[i].id,
+                          SizedBox(
+                            width: 56,
+                            height: 56,
+                            child: Checkbox(
+                              value: demoStore.selectedFineIds.contains(
+                                demoStore.payable[i].id,
+                              ),
+                              onChanged: (_) =>
+                                  demoStore.toggleFine(demoStore.payable[i].id),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              side: const BorderSide(color: blue, width: 2),
                             ),
-                            onChanged: (_) =>
-                                demoStore.toggleFine(demoStore.payable[i].id),
                           ),
                           Expanded(
                             child: InkWell(
@@ -69,7 +77,8 @@ class PaymentsScreen extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       color: ink,
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14.5,
+                                      fontWeight: FontWeight.w800,
                                     ),
                                   ),
                                   Text(
@@ -99,8 +108,9 @@ class PaymentsScreen extends StatelessWidget {
                   ],
                 ),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         AppPanel(
+          padding: const EdgeInsets.all(12),
           child: FilledButton.icon(
             onPressed: demoStore.selectedTotal == 0
                 ? null
@@ -118,7 +128,7 @@ class PaymentsScreen extends StatelessWidget {
             label: Text('Pay ${riel(demoStore.selectedTotal)}'),
           ),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 28),
         const SectionTitle('Payment history'),
         AppPanel(
           padding: EdgeInsets.zero,
@@ -183,10 +193,24 @@ class _HistoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-    leading: const Icon(Icons.receipt_long_outlined, color: blue),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+    leading: Container(
+      width: 44,
+      height: 44,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FF),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: const Icon(Icons.receipt_long_outlined, color: blue),
+    ),
     title: Text(
       title,
-      style: const TextStyle(color: ink, fontWeight: FontWeight.w700),
+      style: const TextStyle(
+        color: ink,
+        fontSize: 14.5,
+        fontWeight: FontWeight.w700,
+      ),
     ),
     subtitle: Text(date),
     trailing: Column(

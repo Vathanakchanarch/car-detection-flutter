@@ -1,0 +1,70 @@
+# AICA Figma to Flutter mapping
+
+Source inspected through the connected Figma MCP:
+
+- Figma Make file: `iIFsWjqWJeq6g84cZSU6zT` — **Develop (Copy)**
+- Root node: `0:1`
+- Make source groups: `src/App.tsx`, `src/screens/auth.tsx`,
+  `src/screens/main.tsx`, `src/screens/more.tsx`, `src/ui.tsx`, and
+  `src/store.tsx`
+
+Figma Make exposes this project as runnable source rather than individual Design
+frame nodes. The screen mapping below follows the app routes and shared UI groups
+reported by MCP.
+
+| Figma screen or component | Flutter implementation |
+| --- | --- |
+| App root and flow | `lib/main.dart` |
+| Splash/onboarding | `lib/UI/onboarding_screen.dart` |
+| Sign in | `lib/UI/sign_in_screen.dart` |
+| OTP verification | `lib/UI/verify_screen.dart` |
+| Main app and bottom navigation | `lib/UI/app_shell.dart` |
+| Home | `lib/UI/home_screen.dart` |
+| Violations list and filters | `lib/UI/violations_screen.dart` |
+| Violation detail / AI alert | `lib/UI/violation_detail_screen.dart` |
+| Appeal/dispute | `lib/UI/appeal_screen.dart` |
+| Payments and history | `lib/UI/payments_screen.dart` |
+| Review and demo payment result | `lib/UI/review_payment_screen.dart` |
+| Vehicles | `lib/UI/vehicles_screen.dart` |
+| Vehicle detail | `lib/UI/vehicle_detail_screen.dart` |
+| Driving licence | `lib/UI/licence_screen.dart` |
+| Notifications | `lib/UI/notifications_screen.dart` |
+| Profile | `lib/UI/profile_screen.dart` |
+| Personal information and settings pages | `lib/UI/settings_screen.dart` |
+| Shared panels, badges, cards, rows and navigation helpers | `lib/UI/widgets/app_components.dart` |
+| Make demo state | `lib/data/demo_store.dart` |
+
+## Design tokens used in Flutter
+
+- Primary blue: `#2563EB`
+- Dark ink/navy: `#102A43`
+- App background: `#F8FAFC`
+- Muted text: `#526579`
+- Card border: `#C9D5E2`
+- Main content width: responsive up to 390 logical pixels
+- Primary button height: 52 logical pixels
+- Primary button radius: 16 logical pixels
+- General card radius: 20 logical pixels
+
+## Assets
+
+The Make source exposes `src/assets/logo.png`, `public/favicon.svg`, and ten
+generated PNG image resources. The current Flutter prototype uses the reusable
+code-drawn `TrafficIllustration` and Material icons. Exact Make image resource
+bytes were not exported into the repository because Make resource links are not
+normal Design asset exports. These remain the known visual placeholders:
+
+- AICA logo: Material traffic icon
+- Onboarding artwork: `lib/UI/widgets/traffic_illustration.dart`
+- Evidence video: styled local placeholder in the violation detail screen
+- Vehicle artwork: Material vehicle icons
+
+## Known differences
+
+- Flutter uses the platform Material icon set where Make uses web icons.
+- The app uses the device status and navigation bars; Figma/device chrome is not
+  drawn into Flutter.
+- Evidence media, official registry data, real SMS, payment services, and Khmer
+  localization remain outside the visual parity scope.
+- Demo payment, appeal, notification-read state, and profile edits reset when the
+  app process restarts.

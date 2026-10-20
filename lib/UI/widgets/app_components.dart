@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../data/demo_data.dart';
 import '../../model/violation.dart';
 
-const ink = Color(0xFF17324A);
-const blue = Color(0xFF2864E9);
-const muted = Color(0xFF647487);
+const ink = Color(0xFF102A43);
+const blue = Color(0xFF2563EB);
+const muted = Color(0xFF526579);
 
 void openPage(BuildContext context, Widget page) {
   Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
@@ -25,7 +25,7 @@ class AppPanel extends StatelessWidget {
     padding: padding,
     decoration: BoxDecoration(
       color: Colors.white,
-      border: Border.all(color: const Color(0xFFE2E8EF)),
+      border: Border.all(color: const Color(0xFFC9D5E2)),
       borderRadius: BorderRadius.circular(20),
       boxShadow: const [
         BoxShadow(
@@ -45,10 +45,12 @@ class DetailPage extends StatelessWidget {
     required this.title,
     required this.child,
     this.bottom,
+    this.actions,
   });
   final String title;
   final Widget child;
   final Widget? bottom;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -57,16 +59,17 @@ class DetailPage extends StatelessWidget {
         title,
         style: const TextStyle(
           color: ink,
-          fontSize: 21,
+          fontSize: 20,
           fontWeight: FontWeight.w800,
         ),
       ),
       backgroundColor: Colors.transparent,
       elevation: 0,
+      actions: actions,
     ),
     body: Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 390),
         child: Column(
           children: [
             Expanded(
@@ -97,7 +100,7 @@ class SectionTitle extends StatelessWidget {
       text,
       style: const TextStyle(
         color: ink,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: FontWeight.w800,
       ),
     ),
@@ -110,17 +113,24 @@ class InfoRow extends StatelessWidget {
   final String value;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 11),
+    padding: const EdgeInsets.symmetric(vertical: 12),
     child: Row(
       children: [
         Expanded(
-          child: Text(label, style: const TextStyle(color: muted)),
+          child: Text(
+            label,
+            style: const TextStyle(color: muted, fontSize: 14),
+          ),
         ),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: const TextStyle(color: ink, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              color: ink,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],

@@ -85,6 +85,30 @@ class DemoStore extends ChangeNotifier {
     darkMode = value;
     notifyListeners();
   }
+
+  void reset() {
+    phone = '12 345 678';
+    name = 'Sophea Vann';
+    email = '';
+    darkMode = false;
+    selectedFineIds
+      ..clear()
+      ..addAll({'speeding', 'helmet'});
+    paidFineIds.clear();
+    readNotificationIds
+      ..clear()
+      ..addAll({3, 4, 5});
+    appeals.clear();
+    notificationPreferences
+      ..clear()
+      ..addAll({
+        'New potential violations': true,
+        'Official fine confirmed': true,
+        'Payment reminders': true,
+        'Tips & news': false,
+      });
+    notifyListeners();
+  }
 }
 
 final demoStore = DemoStore();

@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: demoStore,
     builder: (context, _) => ListView(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       children: [
         Row(
           children: [
@@ -51,22 +51,32 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            IconButton(
-              tooltip: 'Notifications',
-              onPressed: () => openPage(context, const NotificationsScreen()),
-              icon: const Badge(
-                label: Text('3'),
-                child: Icon(Icons.notifications_none_rounded),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFC9D5E2)),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                tooltip: 'Notifications',
+                onPressed: () => openPage(context, const NotificationsScreen()),
+                icon: const Badge(
+                  backgroundColor: Color(0xFFC32632),
+                  label: Text('3'),
+                  child: Icon(Icons.notifications),
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF17324A), Color(0xFF18417E)],
+              colors: [Color(0xFF102A43), Color(0xFF173A70)],
             ),
             borderRadius: BorderRadius.circular(24),
           ),
@@ -75,22 +85,22 @@ class HomeScreen extends StatelessWidget {
             children: [
               const Text(
                 'You have fines to pay',
-                style: TextStyle(color: Color(0xFFB8C9D9)),
+                style: TextStyle(color: Colors.white70, fontSize: 13),
               ),
               const SizedBox(height: 5),
               Text(
                 riel(demoStore.payable.fold(0, (sum, v) => sum + v.amount)),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 32,
+                  fontSize: 36,
                   fontWeight: FontWeight.w800,
                 ),
               ),
               const Text(
                 '2 confirmed · pay by 31 Oct 2026',
-                style: TextStyle(color: Color(0xFFB8C9D9)),
+                style: TextStyle(color: Colors.white70, fontSize: 13),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
               FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -123,7 +133,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 24),
         Row(
           children: [
             const Expanded(child: SectionTitle('Recent alerts')),
@@ -172,7 +182,7 @@ class _Shortcut extends StatelessWidget {
             height: 52,
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: const Color(0xFFE2E8EF)),
+              border: Border.all(color: const Color(0xFFC9D5E2)),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: blue),

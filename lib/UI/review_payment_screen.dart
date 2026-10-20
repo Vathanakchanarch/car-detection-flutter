@@ -84,17 +84,26 @@ class _ReviewPaymentScreenState extends State<ReviewPaymentScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: const Color(0xFFFFF4D9),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Text(
-            '⚠ Payments are not connected to an authorised government service yet. This screen simulates the flow.',
-            style: TextStyle(color: Color(0xFF835B00)),
+          child: const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.science, color: Color(0xFF9D6B00), size: 20),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Payments are not connected to an authorised government service yet. This screen simulates the flow.',
+                  style: TextStyle(color: Color(0xFF9D6B00), fontSize: 13),
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 26),
+        const SizedBox(height: 20),
         const SectionTitle('Fines'),
         AppPanel(
           child: Column(
@@ -106,47 +115,106 @@ class _ReviewPaymentScreenState extends State<ReviewPaymentScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 26),
+        const SizedBox(height: 20),
         const SectionTitle('Payment method'),
-        const AppPanel(
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.account_balance),
-            title: Text('Bank app'),
-            subtitle: Text('Not connected yet'),
+        const Opacity(
+          opacity: .55,
+          child: _PaymentOption(
+            icon: Icons.account_balance,
+            title: 'Bank app',
+            subtitle: 'Not connected yet',
+            selected: true,
           ),
         ),
         const SizedBox(height: 8),
-        const AppPanel(
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.phone_android),
-            title: Text('Mobile wallet'),
-            subtitle: Text('Not connected yet'),
+        const Opacity(
+          opacity: .55,
+          child: _PaymentOption(
+            icon: Icons.phone_android,
+            title: 'Mobile wallet',
+            subtitle: 'Not connected yet',
           ),
         ),
         const SizedBox(height: 8),
         InkWell(
           onTap: () => setState(() => _demoSelected = true),
-          child: AppPanel(
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.science_outlined, color: blue),
-              title: const Text('Demo simulation'),
-              subtitle: const Text('Prototype only'),
-              trailing: Icon(
-                _demoSelected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
-                color: _demoSelected ? blue : muted,
-              ),
-            ),
+          borderRadius: BorderRadius.circular(16),
+          child: _PaymentOption(
+            icon: Icons.science_outlined,
+            title: 'Demo simulation',
+            subtitle: 'Prototype only',
+            selected: _demoSelected,
           ),
         ),
         const SizedBox(height: 16),
         const Text(
           '🔒 We never ask for or store card details in this app.',
           style: TextStyle(color: muted, fontSize: 12),
+        ),
+      ],
+    ),
+  );
+}
+
+class _PaymentOption extends StatelessWidget {
+  const _PaymentOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    this.selected = false,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: selected ? const Color(0xFFEAF1FF) : Colors.white,
+      border: Border.all(
+        color: selected ? blue : const Color(0xFFC9D5E2),
+        width: 2,
+      ),
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: ink),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: ink,
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(color: muted, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+        Icon(
+          selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+          color: selected ? blue : const Color(0xFFC9D5E2),
         ),
       ],
     ),

@@ -92,17 +92,26 @@ class VehiclesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DetailPage(
     title: 'My Vehicles',
-    child: Column(
-      children: [
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton.icon(
-            onPressed: () => _addVehicle(context),
-            icon: const Icon(Icons.add),
-            label: const Text('Add'),
+    actions: [
+      Padding(
+        padding: const EdgeInsets.only(right: 12),
+        child: FilledButton.tonalIcon(
+          onPressed: () => _addVehicle(context),
+          icon: const Icon(Icons.add, size: 20),
+          label: const Text('Add'),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(0, 40),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            textStyle: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-        const SizedBox(height: 8),
+      ),
+    ],
+    child: Column(
+      children: [
         for (final vehicle in demoVehicles) ...[
           InkWell(
             onTap: () =>
@@ -113,11 +122,21 @@ class VehiclesScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        vehicle.type == 'Car'
-                            ? Icons.directions_car
-                            : Icons.two_wheeler,
-                        color: blue,
+                      Container(
+                        width: 48,
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEAF1FF),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          vehicle.type == 'Car'
+                              ? Icons.directions_car
+                              : Icons.two_wheeler,
+                          color: blue,
+                          size: 26,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -128,12 +147,16 @@ class VehiclesScreen extends StatelessWidget {
                               vehicle.name,
                               style: const TextStyle(
                                 color: ink,
-                                fontWeight: FontWeight.w800,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             Text(
                               vehicle.type,
-                              style: const TextStyle(color: muted),
+                              style: const TextStyle(
+                                color: muted,
+                                fontSize: 12.5,
+                              ),
                             ),
                           ],
                         ),
@@ -142,28 +165,58 @@ class VehiclesScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'CAMBODIA · ព្រះរាជាណាចក្រកម្ពុជា',
-                    style: TextStyle(color: blue, fontSize: 10),
-                  ),
                   Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          vehicle.plate,
-                          style: const TextStyle(
-                            color: ink,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: ink, width: 2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              children: [
+                                const Text(
+                                  'CAMBODIA · ព្រះរាជាណាចក្រកម្ពុជា',
+                                  style: TextStyle(color: blue, fontSize: 6),
+                                ),
+                                Text(
+                                  vehicle.plate,
+                                  style: const TextStyle(
+                                    color: ink,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      const Text(
-                        '● Verified',
-                        style: TextStyle(
-                          color: Color(0xFF188653),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFE5F6EB),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text(
+                          '✓ Verified',
+                          style: TextStyle(
+                            color: Color(0xFF188653),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],

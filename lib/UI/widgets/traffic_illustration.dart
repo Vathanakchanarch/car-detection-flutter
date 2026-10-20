@@ -25,19 +25,19 @@ class TrafficIllustration extends StatelessWidget {
         OnboardingArtwork.shield => 'Secure licence illustration',
       },
       child: Container(
-        width: 224,
-        height: 224,
+        width: 250,
+        height: 250,
         decoration: BoxDecoration(
           color: backgroundColor,
           shape: BoxShape.circle,
         ),
         child: Center(
           child: Container(
-            width: 156,
-            height: 156,
+            width: 174,
+            height: 174,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(38),
+              borderRadius: BorderRadius.circular(42),
               boxShadow: const [
                 BoxShadow(
                   color: Color(0x180F2D4C),
@@ -49,7 +49,7 @@ class TrafficIllustration extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Icon(icon, size: 98, color: const Color(0xFF17324A)),
+                Icon(icon, size: 104, color: const Color(0xFF102A43)),
                 if (artwork == OnboardingArtwork.alert)
                   const Positioned(
                     right: 11,
@@ -70,7 +70,7 @@ class TrafficIllustration extends StatelessWidget {
                 if (artwork == OnboardingArtwork.camera)
                   const CircleAvatar(
                     radius: 15,
-                    backgroundColor: Color(0xFF2864E9),
+                    backgroundColor: Color(0xFF2563EB),
                     child: CircleAvatar(
                       radius: 6,
                       backgroundColor: Colors.white,
