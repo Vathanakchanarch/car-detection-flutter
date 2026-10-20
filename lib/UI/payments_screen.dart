@@ -45,19 +45,45 @@ class PaymentsScreen extends StatelessWidget {
                     for (var i = 0; i < demoStore.payable.length; i++) ...[
                       Row(
                         children: [
-                          SizedBox(
-                            width: 56,
-                            height: 56,
-                            child: Checkbox(
-                              value: demoStore.selectedFineIds.contains(
-                                demoStore.payable[i].id,
-                              ),
-                              onChanged: (_) =>
+                          Semantics(
+                            label: 'Select fine',
+                            checked: demoStore.selectedFineIds.contains(
+                              demoStore.payable[i].id,
+                            ),
+                            child: InkWell(
+                              onTap: () =>
                                   demoStore.toggleFine(demoStore.payable[i].id),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                              child: SizedBox(
+                                width: 56,
+                                height: 56,
+                                child: Center(
+                                  child: Container(
+                                    width: 28,
+                                    height: 28,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          demoStore.selectedFineIds.contains(
+                                            demoStore.payable[i].id,
+                                          )
+                                          ? blue
+                                          : Colors.white,
+                                      border: Border.all(color: blue, width: 2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child:
+                                        demoStore.selectedFineIds.contains(
+                                          demoStore.payable[i].id,
+                                        )
+                                        ? const Icon(
+                                            Icons.check,
+                                            size: 19,
+                                            color: Colors.white,
+                                          )
+                                        : null,
+                                  ),
+                                ),
                               ),
-                              side: const BorderSide(color: blue, width: 2),
                             ),
                           ),
                           Expanded(
@@ -96,7 +122,8 @@ class PaymentsScreen extends StatelessWidget {
                             riel(demoStore.payable[i].amount),
                             style: const TextStyle(
                               color: ink,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -192,38 +219,98 @@ class _HistoryRow extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) => ListTile(
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-    leading: Container(
-      width: 44,
-      height: 44,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAF1FF),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Icon(Icons.receipt_long_outlined, color: blue),
-    ),
-    title: Text(
-      title,
-      style: const TextStyle(
-        color: ink,
-        fontSize: 14.5,
-        fontWeight: FontWeight.w700,
-      ),
-    ),
-    subtitle: Text(date),
-    trailing: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          amount,
-          style: const TextStyle(color: ink, fontWeight: FontWeight.w700),
+  Widget build(BuildContext context) {
+    final icon = switch (status) {
+      'Paid' => Icons.check_circle,
+      'Pending' => Icons.hourglass_top,
+      _ => Icons.error,
+    };
+    final background = switch (status) {
+      'Paid' => const Color(0xFFE5F6EB),
+      'Pending' => const Color(0xFFFFF4D9),
+      _ => const Color(0xFFFDEBEC),
+    };
+    return InkWell(
+      onTap: () => showDemoMessage(context, 'Payment history is demo data.'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEAF1FF),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.receipt_long_outlined, color: blue),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: ink,
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    date,
+                    style: const TextStyle(color: muted, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 6),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  amount,
+                  style: const TextStyle(
+                    color: ink,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: background,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, size: 13, color: color),
+                      const SizedBox(width: 4),
+                      Text(
+                        status,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        Text(status, style: TextStyle(color: color, fontSize: 12)),
-      ],
-    ),
-    onTap: () => showDemoMessage(context, 'Payment history is demo data.'),
-  );
+      ),
+    );
+  }
 }

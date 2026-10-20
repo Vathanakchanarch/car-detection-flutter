@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/demo_store.dart';
 import 'home_screen.dart';
 import 'payments_screen.dart';
 import 'profile_screen.dart';
@@ -62,6 +63,7 @@ class _AppShellState extends State<AppShell> {
                   children: List.generate(4, (index) {
                     final selected = _tab == index;
                     return Expanded(
+                      flex: selected ? 17 : 10,
                       child: InkWell(
                         onTap: () => setState(() => _tab = index),
                         borderRadius: BorderRadius.circular(22),
@@ -74,10 +76,34 @@ class _AppShellState extends State<AppShell> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                icons[index],
-                                size: 21,
-                                color: selected ? Colors.white : muted,
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Icon(
+                                    icons[index],
+                                    size: 23,
+                                    color: selected ? Colors.white : muted,
+                                  ),
+                                  if (index == 1 &&
+                                      !selected &&
+                                      demoStore.payable.isNotEmpty)
+                                    Positioned(
+                                      top: -1,
+                                      right: -6,
+                                      child: Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFC32632),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                               if (selected) ...[
                                 const SizedBox(width: 6),
@@ -87,7 +113,7 @@ class _AppShellState extends State<AppShell> {
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       color: Colors.white,
-                                      fontSize: 12,
+                                      fontSize: 12.5,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),

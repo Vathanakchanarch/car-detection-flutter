@@ -2,6 +2,7 @@ import 'package:car_detection/UI/app_shell.dart';
 import 'package:car_detection/UI/appeal_screen.dart';
 import 'package:car_detection/UI/onboarding_screen.dart';
 import 'package:car_detection/UI/payments_screen.dart';
+import 'package:car_detection/UI/profile_screen.dart';
 import 'package:car_detection/UI/sign_in_screen.dart';
 import 'package:car_detection/UI/vehicles_screen.dart';
 import 'package:car_detection/UI/verify_screen.dart';
@@ -76,6 +77,36 @@ void main() {
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('Recent alerts'), findsOneWidget);
+  });
+
+  testWidgets('main tabs fit a narrow Android viewport', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(320, 640));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(const MaterialApp(home: AppShell()));
+
+    for (final (name, icon) in [
+      ('Violations', Icons.shield_outlined),
+      ('Payments', Icons.account_balance_wallet_outlined),
+      ('Profile', Icons.person_outline),
+      ('Home', Icons.home_rounded),
+    ]) {
+      await tester.tap(find.byIcon(icon));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'after selecting $name');
+    }
+  });
+
+  testWidgets('profile language opens the Figma-style sheet', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: ProfileScreen())),
+    );
+
+    await tester.ensureVisible(find.text('Language'));
+    await tester.tap(find.text('Language'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose language'), findsOneWidget);
+    expect(find.text('ខ្មែរ'), findsOneWidget);
   });
 
   testWidgets('violation search matches title, plate, and location', (

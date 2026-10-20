@@ -107,7 +107,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '+855',
+                                    '🇰🇭 +855',
                                     style: TextStyle(
                                       color: Color(0xFF102A43),
                                       fontSize: 15,
@@ -190,26 +190,33 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        Transform.translate(
-                          offset: Offset(
-                            0,
-                            MediaQuery.sizeOf(context).height < 700 ? -32 : 0,
-                          ),
-                          child: FilledButton.icon(
-                            onPressed: _sendCode,
-                            icon: const Icon(Icons.sms_outlined),
-                            label: const Text('Send code'),
-                          ),
+                        const Spacer(),
+                        FilledButton.icon(
+                          onPressed: _sendCode,
+                          icon: const Icon(Icons.sms_outlined),
+                          label: const Text('Send code'),
                         ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          '🔒 Encrypted. Not an official government app.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFF526579),
-                            fontSize: 12,
-                          ),
+                        const SizedBox(height: 16),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.lock,
+                              size: 14,
+                              color: Color(0xFF526579),
+                            ),
+                            SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                'Encrypted. Not an official government app.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF526579),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

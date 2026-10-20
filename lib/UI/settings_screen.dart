@@ -28,27 +28,69 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       children: [
         const Text(
           'Full name',
-          style: TextStyle(color: ink, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 7),
         TextField(
           controller: _name,
           decoration: const InputDecoration(border: OutlineInputBorder()),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         const Text(
           'Phone',
-          style: TextStyle(color: ink, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 7),
-        InputDecorator(
-          decoration: const InputDecoration(border: OutlineInputBorder()),
-          child: Text('+855 ${demoStore.phone}'),
+        Container(
+          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: const Color(0xFFC9D5E2)),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              const Text(
+                '+855',
+                style: TextStyle(
+                  color: ink,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(width: 1, height: 24, color: const Color(0xFFC9D5E2)),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  demoStore.phone,
+                  style: const TextStyle(
+                    color: ink,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         const Text(
           'Email (optional)',
-          style: TextStyle(color: ink, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 7),
         TextField(
@@ -59,7 +101,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             border: OutlineInputBorder(),
           ),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         FilledButton(
           onPressed: () {
             if (_name.text.trim().isEmpty) {
@@ -131,22 +173,34 @@ class _NotificationPreferencesScreenState
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          for (final key in demoStore.notificationPreferences.keys)
-            SwitchListTile(
-              secondary: const Icon(Icons.notifications_none, color: blue),
-              title: Text(key),
-              value: demoStore.notificationPreferences[key]!,
-              onChanged: (value) =>
-                  setState(() => demoStore.setPreference(key, value)),
+          for (final (index, key)
+              in demoStore.notificationPreferences.keys.indexed) ...[
+            if (index > 0) const Divider(height: 1),
+            AppMenuRow(
+              icon: Icons.notifications_none,
+              label: key,
+              trailing: Switch(
+                value: demoStore.notificationPreferences[key]!,
+                onChanged: (value) =>
+                    setState(() => demoStore.setPreference(key, value)),
+              ),
             ),
+          ],
         ],
       ),
     ),
   );
 }
 
-class PrivacyScreen extends StatelessWidget {
+class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});
+  @override
+  State<PrivacyScreen> createState() => _PrivacyScreenState();
+}
+
+class _PrivacyScreenState extends State<PrivacyScreen> {
+  bool _biometricPreview = true;
+
   @override
   Widget build(BuildContext context) => DetailPage(
     title: 'Privacy & security',
@@ -156,38 +210,41 @@ class PrivacyScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: Column(
             children: [
-              SwitchListTile(
-                title: const Text('Biometric unlock'),
-                secondary: const Icon(Icons.fingerprint, color: blue),
-                value: false,
-                onChanged: (_) => showDemoMessage(
-                  context,
-                  'Biometric unlock needs platform integration.',
+              AppMenuRow(
+                icon: Icons.fingerprint,
+                label: 'Biometric unlock',
+                trailing: Switch(
+                  value: _biometricPreview,
+                  onChanged: (value) {
+                    setState(() => _biometricPreview = value);
+                    showDemoMessage(
+                      context,
+                      'Biometric unlock is a visual demo only.',
+                    );
+                  },
                 ),
               ),
               const Divider(height: 1),
-              ListTile(
-                title: const Text('Change app PIN'),
-                leading: const Icon(Icons.password, color: blue),
-                trailing: const Icon(Icons.chevron_right),
+              AppMenuRow(
+                icon: Icons.password,
+                label: 'Change app PIN',
                 onTap: () => showDemoMessage(
                   context,
                   'App PIN is not configured in this demo.',
                 ),
               ),
               const Divider(height: 1),
-              ListTile(
-                title: const Text('Download my data'),
-                leading: const Icon(Icons.download, color: blue),
-                trailing: const Icon(Icons.chevron_right),
+              AppMenuRow(
+                icon: Icons.download,
+                label: 'Download my data',
                 onTap: () =>
                     showDemoMessage(context, 'Data export needs a backend.'),
               ),
               const Divider(height: 1),
-              ListTile(
-                title: const Text('Delete account'),
-                leading: const Icon(Icons.delete_outline, color: Colors.red),
-                trailing: const Icon(Icons.chevron_right),
+              AppMenuRow(
+                icon: Icons.delete_outline,
+                label: 'Delete account',
+                danger: true,
                 onTap: () => showDemoMessage(
                   context,
                   'Account deletion needs a backend.',
@@ -197,10 +254,24 @@ class PrivacyScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
-        const AppPanel(
-          child: Text(
-            '🔒 Your data is used only to show your own records.',
-            style: TextStyle(color: blue),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEAF1FF),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const Row(
+            children: [
+              Icon(Icons.lock, color: blue, size: 20),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Your data is used only to show your own records.',
+                  style: TextStyle(color: blue, fontSize: 13),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -217,31 +288,28 @@ class HelpScreen extends StatelessWidget {
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          ListTile(
-            title: const Text('FAQs'),
-            leading: const Icon(Icons.help_outline, color: blue),
-            trailing: const Icon(Icons.chevron_right),
+          AppMenuRow(
+            icon: Icons.quiz_outlined,
+            label: 'FAQs',
             onTap: () => showDemoMessage(
               context,
               'FAQs are not connected in this demo.',
             ),
           ),
           const Divider(height: 1),
-          ListTile(
-            title: const Text('Call support'),
-            subtitle: const Text('Demo number'),
-            leading: const Icon(Icons.call_outlined, color: blue),
-            trailing: const Icon(Icons.chevron_right),
+          AppMenuRow(
+            icon: Icons.call_outlined,
+            label: 'Call support',
+            subtitle: 'Demo number',
             onTap: () => showDemoMessage(
               context,
               'Support number is a demo placeholder.',
             ),
           ),
           const Divider(height: 1),
-          ListTile(
-            title: const Text('Chat with us'),
-            leading: const Icon(Icons.chat_outlined, color: blue),
-            trailing: const Icon(Icons.chevron_right),
+          AppMenuRow(
+            icon: Icons.chat_outlined,
+            label: 'Chat with us',
             onTap: () =>
                 showDemoMessage(context, 'Chat support needs a backend.'),
           ),

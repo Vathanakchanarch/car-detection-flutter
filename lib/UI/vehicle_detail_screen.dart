@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/demo_data.dart';
 import '../model/vehicle.dart';
+import '../model/violation.dart';
 import 'violation_detail_screen.dart';
 import 'widgets/app_components.dart';
 
@@ -73,6 +74,7 @@ class VehicleDetailScreen extends StatelessWidget {
         const SizedBox(height: 26),
         const SectionTitle('Details'),
         AppPanel(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               InfoRow('Type', vehicle.type),
@@ -102,20 +104,77 @@ class VehicleDetailScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: Column(
             children: [
-              for (final violation in demoViolations.where(
-                (v) => v.plate == vehicle.plate,
-              ))
-                ViolationTile(
-                  violation: violation,
-                  onTap: () => openPage(
-                    context,
-                    ViolationDetailScreen(violation: violation),
-                  ),
-                ),
+              for (final (index, violation)
+                  in demoViolations
+                      .where((v) => v.plate == vehicle.plate)
+                      .indexed) ...[
+                if (index > 0) const Divider(height: 1),
+                _LinkedViolationRow(violation: violation),
+              ],
             ],
           ),
         ),
       ],
+    ),
+  );
+}
+
+class _LinkedViolationRow extends StatelessWidget {
+  const _LinkedViolationRow({required this.violation});
+  final Violation violation;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: () => openPage(context, ViolationDetailScreen(violation: violation)),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xFFEAF1FF),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              switch (violation.id) {
+                'red-light' => Icons.traffic,
+                'speeding' => Icons.speed,
+                'parking' => Icons.local_parking,
+                _ => Icons.traffic,
+              },
+              color: blue,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  violation.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: ink,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  violation.date,
+                  style: const TextStyle(color: muted, fontSize: 12.5),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          StatusBadge(violation.status),
+        ],
+      ),
     ),
   );
 }

@@ -31,6 +31,8 @@ class SmartTrafficApp extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: const Color(0xFF2563EB),
           foregroundColor: Colors.white,
+          disabledBackgroundColor: const Color(0x732563EB),
+          disabledForegroundColor: const Color(0xBFFFFFFF),
           minimumSize: const Size.fromHeight(52),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

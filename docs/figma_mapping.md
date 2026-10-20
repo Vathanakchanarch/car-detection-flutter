@@ -1,6 +1,6 @@
 # AICA Figma to Flutter mapping
 
-Source inspected through the connected Figma MCP:
+The connected Figma MCP enumerated these Make resources:
 
 - Figma Make file: `iIFsWjqWJeq6g84cZSU6zT` — **Develop (Copy)**
 - Root node: `0:1`
@@ -9,8 +9,11 @@ Source inspected through the connected Figma MCP:
   `src/store.tsx`
 
 Figma Make exposes this project as runnable source rather than individual Design
-frame nodes. The screen mapping below follows the app routes and shared UI groups
-reported by MCP.
+frame nodes. This connection returned source file links but rejected reads of
+their contents (`Unknown resource`), so the file bodies could not be inspected.
+The live Make preview was inspected screen by screen, including its rendered DOM
+and styling classes. The mapping below follows those screens and the MCP source
+groups.
 
 | Figma screen or component | Flutter implementation |
 | --- | --- |
@@ -68,3 +71,19 @@ normal Design asset exports. These remain the known visual placeholders:
   localization remain outside the visual parity scope.
 - Demo payment, appeal, notification-read state, and profile edits reset when the
   app process restarts.
+
+## Final visual pass
+
+- The sign-in form now uses the flag and keeps its action at the bottom, as in
+  Make. OTP uses the Make disabled-button color and the six separate input boxes.
+- Shared violation badges now use icons, the Make colors, and matching spacing.
+  Violation and payment rows, selected bottom navigation width, and detail page
+  headers were aligned with the preview.
+- Payment selection controls and history badges, linked vehicle violations,
+  profile menu rows, the language sheet, and settings inputs/menu rows were
+  aligned with the preview.
+- A 320 logical-pixel widget test checks the four main tabs for layout overflow.
+
+The remaining visible differences are the exact Make logo/illustration and
+evidence media assets, Material icons versus Make's web icon font, and device
+specific font rendering. Pixel parity has not been verified on Android hardware.

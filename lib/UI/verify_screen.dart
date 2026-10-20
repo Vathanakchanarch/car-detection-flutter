@@ -164,6 +164,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 const Spacer(),
                 FilledButton(
                   onPressed: _code.text.length == 6 ? _verify : null,
+                  style: FilledButton.styleFrom(
+                    disabledBackgroundColor: blue.withValues(alpha: .45),
+                    disabledForegroundColor: Colors.white.withValues(
+                      alpha: .75,
+                    ),
+                  ),
                   child: const Text('Verify & continue'),
                 ),
               ],

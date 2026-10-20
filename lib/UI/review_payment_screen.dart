@@ -106,6 +106,7 @@ class _ReviewPaymentScreenState extends State<ReviewPaymentScreen> {
         const SizedBox(height: 20),
         const SectionTitle('Fines'),
         AppPanel(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               for (final fine in widget.fines)

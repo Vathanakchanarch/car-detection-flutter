@@ -31,7 +31,10 @@ class DemoStore extends ChangeNotifier {
       .fold(0, (sum, v) => sum + v.amount);
 
   void setPhone(String value) {
-    phone = value;
+    final digits = value.replaceAll(RegExp(r'\D'), '');
+    phone = digits.length >= 8
+        ? '${digits.substring(0, 2)} ${digits.substring(2, 5)} ${digits.substring(5)}'
+        : value;
     notifyListeners();
   }
 
