@@ -489,6 +489,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Cambodia Smart Traffic · v1.0.0 (demo)';
 
   @override
+  String get cambodiaSmartTraffic => 'Cambodia Smart Traffic';
+
+  @override
   String get markAllRead => 'Mark all read';
 
   @override

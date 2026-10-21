@@ -9,9 +9,11 @@ import 'package:car_detection/UI/verify_screen.dart';
 import 'package:car_detection/UI/violations_screen.dart';
 import 'package:car_detection/data/demo_data.dart';
 import 'package:car_detection/data/demo_store.dart';
+import 'package:car_detection/data/local/local_storage_service.dart';
 import 'package:car_detection/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   setUp(demoStore.reset);
@@ -27,7 +29,12 @@ void main() {
   });
 
   testWidgets('onboarding Skip opens sign in', (tester) async {
-    await tester.pumpWidget(const SmartTrafficApp());
+    SharedPreferences.setMockInitialValues({});
+    final storage = await LocalStorageService.create();
+    await tester.pumpWidget(
+      SmartTrafficApp(storageFactory: () async => storage),
+    );
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();

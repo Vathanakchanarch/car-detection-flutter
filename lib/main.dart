@@ -1,23 +1,41 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'l10n/generated/app_localizations.dart';
 import 'theme/app_theme.dart';
 
-import 'UI/onboarding_screen.dart';
-import 'UI/sign_in_screen.dart';
+import 'UI/splash_screen.dart';
 import 'UI/widgets/app_components.dart';
 import 'data/demo_store.dart';
 import 'data/local/local_storage_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final localStorage = await LocalStorageService.create();
-  await demoStore.initialize(localStorage);
   runApp(const SmartTrafficApp());
 }
 
-class SmartTrafficApp extends StatelessWidget {
-  const SmartTrafficApp({super.key});
+class SmartTrafficApp extends StatefulWidget {
+  const SmartTrafficApp({super.key, this.storageFactory});
+
+  /// Allows startup to use an isolated preference store in widget tests.
+  final Future<LocalStorageService> Function()? storageFactory;
+
+  @override
+  State<SmartTrafficApp> createState() => _SmartTrafficAppState();
+}
+
+class _SmartTrafficAppState extends State<SmartTrafficApp> {
+  late final Future<bool> _startup = _loadPreferences();
+
+  Future<bool> _loadPreferences() async {
+    final localStorage =
+        await (widget.storageFactory?.call() ?? LocalStorageService.create());
+    if (kDebugMode && const bool.fromEnvironment('AICA_RESET_ONBOARDING')) {
+      await localStorage.resetOnboardingForDebug();
+    }
+    await demoStore.initialize(localStorage);
+    return demoStore.hasCompletedOnboarding;
+  }
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -26,7 +44,10 @@ class SmartTrafficApp extends StatelessWidget {
       title: 'Cambodia Smart Traffic',
       navigatorObservers: [ClearMessagesOnNavigation()],
       builder: (context, child) => Center(
-        child: SizedBox(width: mobileContentWidth, child: child),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: mobileContentWidth),
+          child: child,
+        ),
       ),
       debugShowCheckedModeBanner: false,
       locale: Locale(demoStore.languageCode),
@@ -35,9 +56,7 @@ class SmartTrafficApp extends StatelessWidget {
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),
       themeMode: demoStore.darkMode ? ThemeMode.dark : ThemeMode.light,
-      home: demoStore.hasCompletedOnboarding
-          ? const SignInScreen()
-          : const OnboardingScreen(),
+      home: SplashScreen(startup: _startup),
     ),
   );
 }

@@ -493,6 +493,9 @@ class AppLocalizationsKm extends AppLocalizations {
       'Cambodia Smart Traffic · v1.0.0 (សាកល្បង)';
 
   @override
+  String get cambodiaSmartTraffic => 'ចរាចរណ៍ឆ្លាតវៃកម្ពុជា';
+
+  @override
   String get markAllRead => 'សម្គាល់ទាំងអស់ថាបានអាន';
 
   @override
