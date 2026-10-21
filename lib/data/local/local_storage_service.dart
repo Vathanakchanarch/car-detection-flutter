@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
@@ -99,17 +98,6 @@ class LocalStorageService {
       await _preferences?.remove(_readNotificationIdsKey);
     } catch (_) {
       // Safe defaults will be used the next time the app starts.
-    }
-  }
-
-  /// Clears only onboarding in debug builds so the first-launch flow can be
-  /// retested without removing language, theme, or notification preferences.
-  Future<void> resetOnboardingForDebug() async {
-    if (!kDebugMode) return;
-    try {
-      await _preferences?.remove(_onboardingKey);
-    } catch (_) {
-      // Startup still uses the current saved state if storage is unavailable.
     }
   }
 }

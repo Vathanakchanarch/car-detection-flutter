@@ -80,19 +80,4 @@ void main() {
     expect(storage.getLanguage(), 'en');
     expect(storage.getReadNotificationIds(), isEmpty);
   });
-
-  test('debug onboarding reset preserves other local preferences', () async {
-    final storage = await createStorage();
-    await storage.setOnboardingCompleted(true);
-    await storage.setLanguage('km');
-    await storage.setDarkMode(true);
-    await storage.saveReadNotificationIds({1, 2});
-
-    await storage.resetOnboardingForDebug();
-
-    expect(storage.isOnboardingCompleted(), isFalse);
-    expect(storage.getLanguage(), 'km');
-    expect(storage.isDarkMode(), isTrue);
-    expect(storage.getReadNotificationIds(), {1, 2});
-  });
 }

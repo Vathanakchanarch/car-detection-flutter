@@ -1004,12 +1004,6 @@ abstract class AppLocalizations {
   /// **'Cambodia Smart Traffic · v1.0.0 (demo)'**
   String get cambodiaSmartTrafficV100Demo;
 
-  /// No description provided for @cambodiaSmartTraffic.
-  ///
-  /// In en, this message translates to:
-  /// **'Cambodia Smart Traffic'**
-  String get cambodiaSmartTraffic;
-
   /// No description provided for @markAllRead.
   ///
   /// In en, this message translates to:
