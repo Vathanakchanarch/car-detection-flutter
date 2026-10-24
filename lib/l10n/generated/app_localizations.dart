@@ -1004,6 +1004,12 @@ abstract class AppLocalizations {
   /// **'Cambodia Smart Traffic · v1.0.0 (demo)'**
   String get cambodiaSmartTrafficV100Demo;
 
+  /// No description provided for @cambodiaSmartTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'Cambodia Smart Traffic'**
+  String get cambodiaSmartTraffic;
+
   /// No description provided for @markAllRead.
   ///
   /// In en, this message translates to:
@@ -1645,6 +1651,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Available on Android'**
   String get availableOnAndroid;
+
+  /// No description provided for @homeOutstandingConfirmedFines.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding Confirmed Fines'**
+  String get homeOutstandingConfirmedFines;
+
+  /// No description provided for @homeLicencePointsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Licence info · points unavailable'**
+  String get homeLicencePointsUnavailable;
+
+  /// No description provided for @homeAiDetectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Detection vs Confirmed Fine'**
+  String get homeAiDetectionTitle;
+
+  /// No description provided for @homeAiDetectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending detections require officer verification before any fine is confirmed.'**
+  String get homeAiDetectionBody;
+
+  /// No description provided for @homeRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Violations & Activity'**
+  String get homeRecentActivity;
+
+  /// No description provided for @homeViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get homeViewAll;
+
+  /// No description provided for @homeConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get homeConfirmed;
+
+  /// No description provided for @homeUnderAiReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under AI Review'**
+  String get homeUnderAiReview;
+
+  /// No description provided for @homeNoFineYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No fine yet'**
+  String get homeNoFineYet;
+
+  /// No description provided for @homeVehicleOnFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle on file'**
+  String get homeVehicleOnFile;
+
+  /// No description provided for @homeDemoRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo record'**
+  String get homeDemoRecord;
+
+  /// No description provided for @homeDemoReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample demo receipt'**
+  String get homeDemoReceipt;
+
+  /// No description provided for @homePrototypeSimulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Prototype simulation'**
+  String get homePrototypeSimulation;
+
+  /// No description provided for @homeDemoPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo paid'**
+  String get homeDemoPaid;
 }
 
 class _AppLocalizationsDelegate

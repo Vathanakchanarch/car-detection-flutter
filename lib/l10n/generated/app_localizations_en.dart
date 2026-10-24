@@ -489,6 +489,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Cambodia Smart Traffic · v1.0.0 (demo)';
 
   @override
+  String get cambodiaSmartTraffic => 'Cambodia Smart Traffic';
+
+  @override
   String get markAllRead => 'Mark all read';
 
   @override
@@ -834,4 +837,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get availableOnAndroid => 'Available on Android';
+
+  @override
+  String get homeOutstandingConfirmedFines => 'Outstanding Confirmed Fines';
+
+  @override
+  String get homeLicencePointsUnavailable =>
+      'Licence info · points unavailable';
+
+  @override
+  String get homeAiDetectionTitle => 'AI Detection vs Confirmed Fine';
+
+  @override
+  String get homeAiDetectionBody =>
+      'Pending detections require officer verification before any fine is confirmed.';
+
+  @override
+  String get homeRecentActivity => 'Recent Violations & Activity';
+
+  @override
+  String get homeViewAll => 'View All';
+
+  @override
+  String get homeConfirmed => 'Confirmed';
+
+  @override
+  String get homeUnderAiReview => 'Under AI Review';
+
+  @override
+  String get homeNoFineYet => 'No fine yet';
+
+  @override
+  String get homeVehicleOnFile => 'Vehicle on file';
+
+  @override
+  String get homeDemoRecord => 'Demo record';
+
+  @override
+  String get homeDemoReceipt => 'Sample demo receipt';
+
+  @override
+  String get homePrototypeSimulation => 'Prototype simulation';
+
+  @override
+  String get homeDemoPaid => 'Demo paid';
 }

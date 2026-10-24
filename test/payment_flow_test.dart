@@ -122,7 +122,7 @@ void main() {
     await tester.tap(find.text('Back to Home'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Recent alerts'), findsOneWidget);
+    expect(find.text('Recent Violations & Activity'), findsOneWidget);
     expect(find.text('Payment successful'), findsNothing);
   });
 

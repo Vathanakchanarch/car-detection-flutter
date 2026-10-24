@@ -1,189 +1,268 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-
-import '../l10n/l10n_context.dart';
-
 import '../data/demo_data.dart';
 import '../data/demo_store.dart';
+import '../l10n/demo_labels.dart';
+import '../l10n/l10n_context.dart';
+import '../model/violation.dart';
+import '../theme/app_colors.dart';
 import 'licence_screen.dart';
 import 'notifications_screen.dart';
 import 'vehicles_screen.dart';
 import 'violation_detail_screen.dart';
 import 'widgets/app_components.dart';
 
+const _font = 'Plus Jakarta Sans';
+const _blue = Color(0xFF155DFC);
+const _ink = Color(0xFF0E0E0F);
+const _muted = Color(0xFF8E8E93);
+
+TextStyle _type(
+  double size,
+  FontWeight weight,
+  Color color, {
+  double? height,
+}) => TextStyle(
+  fontFamily: _font,
+  fontFamilyFallback: khmerFontFallback,
+  fontSize: size,
+  fontWeight: weight,
+  color: color,
+  height: height,
+);
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.onSelectTab});
+
   final ValueChanged<int> onSelectTab;
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: demoStore,
-    builder: (context, _) => ListView(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 32),
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: ink,
-              child: Text(
-                'SV',
-                style: TextStyle(
-                  fontFamily: aicaFontFamily,
-                  fontFamilyFallback: khmerFontFallback,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.l10n.goodMorning,
-                    style: TextStyle(
-                      fontFamily: aicaFontFamily,
-                      fontFamilyFallback: khmerFontFallback,
-                      color: aicaMuted(context),
-                      fontSize: 13,
-                    ),
-                  ),
-                  Text(
-                    demoStore.name,
-                    style: TextStyle(
-                      fontFamily: aicaFontFamily,
-                      fontFamilyFallback: khmerFontFallback,
-                      color: aicaInk(context),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: aicaSurface(context),
-                border: Border.all(color: aicaBorder(context)),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                tooltip: context.l10n.notifications,
-                onPressed: () => openPage(context, NotificationsScreen()),
-                icon: Badge(
-                  backgroundColor: aicaTone(context, Color(0xFFC32632)),
-                  label: Text('3'),
-                  child: Icon(Icons.notifications),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16),
-        Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF102A43), Color(0xFF173A70)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                context.l10n.youHaveFinesToPay,
-                style: TextStyle(
-                  fontFamily: aicaFontFamily,
-                  fontFamilyFallback: khmerFontFallback,
-                  color: Colors.white70,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(height: 5),
-              Text(
-                riel(demoStore.payable.fold(0, (sum, v) => sum + v.amount)),
-                style: TextStyle(
-                  fontFamily: aicaFontFamily,
-                  fontFamilyFallback: khmerFontFallback,
-                  color: Colors.white,
-                  fontSize: 36,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              Text(
-                context.l10n.label2ConfirmedPayBy31Oct2026,
-                style: TextStyle(
-                  fontFamily: aicaFontFamily,
-                  fontFamilyFallback: khmerFontFallback,
-                  color: Colors.white70,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(height: 20),
-              FilledButton.icon(
-                icon: const Icon(Icons.lock_outline, size: 18),
-                style: FilledButton.styleFrom(
-                  backgroundColor: aicaSurface(context),
-                  foregroundColor: aicaInk(context),
-                ),
-                onPressed: () => onSelectTab(2),
-                label: Text(context.l10n.payNow),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 24),
-        Row(
-          children: [
-            _Shortcut(
-              Icons.payments_outlined,
-              context.l10n.payFines,
-              () => onSelectTab(2),
-            ),
-            _Shortcut(Icons.gavel, context.l10n.appeal, () => onSelectTab(1)),
-            _Shortcut(
-              Icons.directions_car_outlined,
-              context.l10n.vehicles,
-              () => openPage(context, VehiclesScreen()),
-            ),
-            _Shortcut(
-              Icons.badge_outlined,
-              context.l10n.licence,
-              () => openPage(context, LicenceScreen()),
-            ),
-          ],
-        ),
-        SizedBox(height: 24),
-        Row(
-          children: [
-            Expanded(child: SectionTitle(context.l10n.recentAlerts)),
-            TextButton(
-              onPressed: () => onSelectTab(1),
-              child: Text(context.l10n.seeAll),
-            ),
-          ],
-        ),
-        AppPanel(
+    builder: (context, _) {
+      final total = demoStore.payable.fold<int>(
+        0,
+        (sum, violation) => sum + violation.amount,
+      );
+      return ColoredBox(
+        color: isDark(context) ? const Color(0xFF101A2C) : Colors.white,
+        child: ListView(
           padding: EdgeInsets.zero,
-          child: Column(
+          children: [
+            _Hero(total: total, onSelectTab: onSelectTab),
+            _Activity(onSelectTab: onSelectTab),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+class _Hero extends StatelessWidget {
+  const _Hero({required this.total, required this.onSelectTab});
+
+  final int total;
+  final ValueChanged<int> onSelectTab;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = isDark(context);
+    final vehicle = demoVehicles.first;
+    final vehicleName = vehicle.name.replaceFirst(RegExp(r' \d{4}$'), '');
+    final initials = demoStore.name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .take(2)
+        .map((part) => part[0].toUpperCase())
+        .join();
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: dark
+              ? const [Color(0xFF062C75), Color(0xFF1652BE), Color(0xFF24375E)]
+              : const [Color(0xFF0848C9), Color(0xFF1E6BFA), Color(0xFFE3EFFF)],
+          stops: const [0, .57, 1],
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
             children: [
-              for (var i = 0; i < 3; i++) ...[
-                ViolationTile(
-                  violation: demoViolations[i],
-                  onTap: () => openPage(
-                    context,
-                    ViolationDetailScreen(violation: demoViolations[i]),
-                  ),
+              CircleAvatar(
+                radius: 21,
+                backgroundColor: Colors.white.withValues(alpha: .25),
+                child: Text(
+                  initials,
+                  style: _type(13, FontWeight.w700, Colors.white),
                 ),
-                if (i < 2) Divider(height: 1),
-              ],
+              ),
+              const SizedBox(width: 13),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${context.l10n.goodMorning},',
+                      style: _type(
+                        11,
+                        FontWeight.w500,
+                        const Color(0xFFE1EBFF),
+                      ),
+                    ),
+                    Text(
+                      demoStore.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: _type(16, FontWeight.w700, Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: context.l10n.notifications,
+                onPressed: () => openPage(context, const NotificationsScreen()),
+                style: IconButton.styleFrom(
+                  backgroundColor: const Color(0x33093DB0),
+                  side: const BorderSide(color: Color(0x33FFFFFF)),
+                  fixedSize: const Size(40, 40),
+                ),
+                icon: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white,
+                      size: 21,
+                    ),
+                    if (demoStore.readNotificationIds.length <
+                        demoNotifications.length)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFEF4444),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ],
+          ),
+          const SizedBox(height: 27),
+          _HeroPill(
+            icon: Icons.circle,
+            iconSize: 8,
+            iconColor: const Color(0xFF4ADE80),
+            label: '${vehicle.plate} · $vehicleName',
+          ),
+          const SizedBox(height: 10),
+          Text(
+            context.l10n.homeOutstandingConfirmedFines,
+            textAlign: TextAlign.center,
+            style: _type(12, FontWeight.w500, const Color(0xFFE1EBFF)),
+          ),
+          const SizedBox(height: 3),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              riel(total),
+              style: _type(36, FontWeight.w800, Colors.white),
+            ),
+          ),
+          const SizedBox(height: 7),
+          _HeroPill(
+            icon: Icons.info_outline,
+            iconSize: 15,
+            iconColor: const Color(0xFFB7F7D3),
+            label: context.l10n.homeLicencePointsUnavailable,
+          ),
+          const SizedBox(height: 34),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _QuickAction(
+                  icon: Icons.shield_outlined,
+                  label: context.l10n.violations,
+                  dark: dark,
+                  onTap: () => onSelectTab(1),
+                ),
+              ),
+              Expanded(
+                child: _QuickAction(
+                  icon: Icons.payments_outlined,
+                  label: context.l10n.payFines,
+                  dark: dark,
+                  onTap: () => onSelectTab(2),
+                ),
+              ),
+              Expanded(
+                child: _QuickAction(
+                  icon: Icons.directions_car_outlined,
+                  label: context.l10n.vehicles,
+                  dark: dark,
+                  onTap: () => openPage(context, const VehiclesScreen()),
+                ),
+              ),
+              Expanded(
+                child: _QuickAction(
+                  icon: Icons.badge_outlined,
+                  label: context.l10n.licence,
+                  dark: dark,
+                  onTap: () => openPage(context, const LicenceScreen()),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeroPill extends StatelessWidget {
+  const _HeroPill({
+    required this.icon,
+    required this.iconSize,
+    required this.iconColor,
+    required this.label,
+  });
+
+  final IconData icon;
+  final double iconSize;
+  final Color iconColor;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    constraints: const BoxConstraints(maxWidth: 320),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: .19),
+      border: Border.all(color: Colors.white.withValues(alpha: .14)),
+      borderRadius: BorderRadius.circular(100),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: iconSize, color: iconColor),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: _type(11, FontWeight.w600, Colors.white),
           ),
         ),
       ],
@@ -191,41 +270,358 @@ class HomeScreen extends StatelessWidget {
   );
 }
 
-class _Shortcut extends StatelessWidget {
-  const _Shortcut(this.icon, this.label, this.onTap);
+class _QuickAction extends StatelessWidget {
+  const _QuickAction({
+    required this.icon,
+    required this.label,
+    required this.dark,
+    required this.onTap,
+  });
+
   final IconData icon;
   final String label;
+  final bool dark;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Expanded(
-    child: InkWell(
-      onTap: onTap,
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(16),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       child: Column(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
-              color: aicaSurface(context),
-              border: Border.all(color: aicaBorder(context)),
-              borderRadius: BorderRadius.circular(16),
+              color: dark ? const Color(0xFF213B6A) : Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: .06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            child: Icon(icon, color: aicaBlue(context)),
+            child: Icon(icon, size: 23, color: dark ? Colors.white : _blue),
           ),
-          SizedBox(height: 7),
+          const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(
-              fontFamily: aicaFontFamily,
-              fontFamilyFallback: khmerFontFallback,
-              color: aicaInk(context),
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: _type(
+              11,
+              FontWeight.w600,
+              dark ? Colors.white : const Color(0xFF1E293B),
+              height: 1.2,
             ),
           ),
         ],
       ),
     ),
   );
+}
+
+class _Activity extends StatelessWidget {
+  const _Activity({required this.onSelectTab});
+
+  final ValueChanged<int> onSelectTab;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = isDark(context);
+    final speeding = demoViolations.firstWhere((v) => v.id == 'speeding');
+    final possible = demoViolations.firstWhere((v) => v.id == 'red-light');
+    final paidTotal = demoViolations
+        .where((v) => demoStore.paidFineIds.contains(v.id))
+        .fold<int>(0, (sum, v) => sum + v.amount);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
+      decoration: BoxDecoration(
+        color: dark ? const Color(0xFF172536) : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: dark ? const Color(0xFF3B4D63) : const Color(0xFFE2E8F0),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: dark ? const Color(0xFF403820) : const Color(0xFFFFFBEB),
+              border: Border.all(
+                color: dark ? const Color(0xFF80672D) : const Color(0xFFFDE8A9),
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.info_outline,
+                  size: 20,
+                  color: Color(0xFFB45309),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.l10n.homeAiDetectionTitle,
+                        style: _type(
+                          12,
+                          FontWeight.w700,
+                          dark
+                              ? const Color(0xFFFFD477)
+                              : const Color(0xFF78350F),
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        context.l10n.homeAiDetectionBody,
+                        style: _type(
+                          11,
+                          FontWeight.w400,
+                          dark
+                              ? const Color(0xFFFFE5B3)
+                              : const Color(0xFF92400E),
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.l10n.homeRecentActivity,
+                  maxLines: 2,
+                  style: _type(
+                    16,
+                    FontWeight.w700,
+                    dark ? Colors.white : _ink,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => onSelectTab(1),
+                child: Text(
+                  context.l10n.homeViewAll,
+                  style: _type(12, FontWeight.w600, aicaBlue(context)),
+                ),
+              ),
+            ],
+          ),
+          _ActivityRow(
+            icon: Icons.speed,
+            title: violationTitle(context, speeding),
+            subtitle: _violationSubtitle(speeding),
+            amount: '-${riel(speeding.amount)}',
+            badge: context.l10n.homeConfirmed,
+            tone: dark ? const Color(0xFFFFA1A8) : const Color(0xFFDC2626),
+            badgeBackground: dark
+                ? const Color(0xFF462A34)
+                : const Color(0xFFFEF2F2),
+            onTap: () =>
+                openPage(context, ViolationDetailScreen(violation: speeding)),
+          ),
+          _ActivityRow(
+            icon: Icons.traffic,
+            title: violationTitle(context, possible),
+            subtitle: _violationSubtitle(possible),
+            amount: context.l10n.homeNoFineYet,
+            badge: context.l10n.homeUnderAiReview,
+            tone: dark ? const Color(0xFFFFD477) : const Color(0xFFB45309),
+            badgeBackground: dark
+                ? const Color(0xFF403820)
+                : const Color(0xFFFFFBEB),
+            onTap: () =>
+                openPage(context, ViolationDetailScreen(violation: possible)),
+          ),
+          _ActivityRow(
+            icon: Icons.verified_user_outlined,
+            title: context.l10n.homeVehicleOnFile,
+            subtitle:
+                '${demoVehicles.first.plate} · ${demoVehicles.first.name}',
+            badge: context.l10n.homeDemoRecord,
+            tone: dark ? const Color(0xFF78D8A9) : const Color(0xFF047857),
+            badgeBackground: dark
+                ? const Color(0xFF203C33)
+                : const Color(0xFFECFDF5),
+            onTap: () => openPage(context, const VehiclesScreen()),
+          ),
+          _ActivityRow(
+            icon: Icons.receipt_long_outlined,
+            title: context.l10n.homeDemoReceipt,
+            subtitle: context.l10n.homePrototypeSimulation,
+            amount: '+${riel(paidTotal == 0 ? 150000 : paidTotal)}',
+            badge: context.l10n.homeDemoPaid,
+            tone: dark ? const Color(0xFF78D8A9) : const Color(0xFF047857),
+            badgeBackground: dark
+                ? const Color(0xFF203C33)
+                : const Color(0xFFECFDF5),
+            onTap: () => onSelectTab(2),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _violationSubtitle(Violation violation) =>
+    '${violation.date} · ${violation.time} · ${violation.location}';
+
+class _ActivityRow extends StatelessWidget {
+  const _ActivityRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.badge,
+    required this.tone,
+    required this.badgeBackground,
+    required this.onTap,
+    this.amount,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String? amount;
+  final String badge;
+  final Color tone;
+  final Color badgeBackground;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = isDark(context);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: dark ? const Color(0xFF304158) : const Color(0xFFF1F5F9),
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: dark
+                      ? const Color(0xFF24364C)
+                      : const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  icon,
+                  size: 22,
+                  color: dark
+                      ? const Color(0xFFD6E4F5)
+                      : const Color(0xFF475569),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: _type(
+                        12,
+                        FontWeight.w600,
+                        dark ? Colors.white : _ink,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: _type(
+                        10,
+                        FontWeight.w400,
+                        dark ? const Color(0xFFAFBED0) : _muted,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 7),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 110),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (amount != null) ...[
+                      Text(
+                        amount!,
+                        maxLines: 2,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                        style: _type(
+                          11,
+                          FontWeight.w700,
+                          dark ? Colors.white : _ink,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                    ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: badgeBackground,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(
+                        badge,
+                        maxLines: 2,
+                        textAlign: TextAlign.right,
+                        style: _type(9, FontWeight.w600, tone, height: 1.15),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -151,6 +151,7 @@
   "darkMode": "របៀបងងឹត",
   "logOut": "ចាកចេញ",
   "cambodiaSmartTrafficV100Demo": "Cambodia Smart Traffic · v1.0.0 (សាកល្បង)",
+  "cambodiaSmartTraffic": "ចរាចរណ៍ឆ្លាតវៃកម្ពុជា",
   "markAllRead": "សម្គាល់ទាំងអស់ថាបានអាន",
   "skip": "រំលង",
   "getStarted": "ចាប់ផ្តើម",
@@ -288,5 +289,19 @@
     }
   },
   "explanationChecks": "✓ AI សម្គាល់វីដេអូដែលមិនប្រាកដប្រជា។ មនុស្សជាអ្នកសម្រេចចុងក្រោយ។\n\n✓ អ្នកអាចមើលភស្តុតាង និងដាក់បណ្តឹងតវ៉ាបើឃើញមានកំហុស។\n\n✓ អ្នកបង់ប្រាក់តែក្រោយពេលមានការបញ្ជាក់ផ្លូវការប៉ុណ្ណោះ។",
-  "availableOnAndroid": "អាចប្រើបានលើ Android"
+  "availableOnAndroid": "អាចប្រើបានលើ Android",
+  "homeOutstandingConfirmedFines": "ប្រាក់ពិន័យដែលបានបញ្ជាក់នៅសល់",
+  "homeLicencePointsUnavailable": "ព័ត៌មានបណ្ណបើកបរ · មិនទាន់មានពិន្ទុ",
+  "homeAiDetectionTitle": "ការរកឃើញដោយ AI និងប្រាក់ពិន័យដែលបានបញ្ជាក់",
+  "homeAiDetectionBody": "ការរកឃើញដែលកំពុងរង់ចាំត្រូវឱ្យមន្ត្រីពិនិត្យ មុននឹងអាចបញ្ជាក់ជាប្រាក់ពិន័យបាន។",
+  "homeRecentActivity": "បទល្មើស និងសកម្មភាពថ្មីៗ",
+  "homeViewAll": "មើលទាំងអស់",
+  "homeConfirmed": "បានបញ្ជាក់",
+  "homeUnderAiReview": "AI កំពុងពិនិត្យ",
+  "homeNoFineYet": "មិនទាន់មានពិន័យ",
+  "homeVehicleOnFile": "យានយន្តក្នុងគំរូ",
+  "homeDemoRecord": "ទិន្នន័យគំរូ",
+  "homeDemoReceipt": "បង្កាន់ដៃគំរូសាកល្បង",
+  "homePrototypeSimulation": "ការសាកល្បងគំរូ",
+  "homeDemoPaid": "បានបង់ក្នុងគំរូ"
 }

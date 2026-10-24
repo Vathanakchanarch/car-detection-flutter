@@ -151,6 +151,7 @@
   "darkMode": "Dark mode",
   "logOut": "Log out",
   "cambodiaSmartTrafficV100Demo": "Cambodia Smart Traffic · v1.0.0 (demo)",
+  "cambodiaSmartTraffic": "Cambodia Smart Traffic",
   "markAllRead": "Mark all read",
   "skip": "Skip",
   "getStarted": "Get Started",
@@ -288,5 +289,19 @@
     }
   },
   "explanationChecks": "✓ AI marks clips it is unsure about. People make the final decision.\n\n✓ You can watch the evidence and appeal if it looks wrong.\n\n✓ You only pay after an official confirmation.",
-  "availableOnAndroid": "Available on Android"
+  "availableOnAndroid": "Available on Android",
+  "homeOutstandingConfirmedFines": "Outstanding Confirmed Fines",
+  "homeLicencePointsUnavailable": "Licence info · points unavailable",
+  "homeAiDetectionTitle": "AI Detection vs Confirmed Fine",
+  "homeAiDetectionBody": "Pending detections require officer verification before any fine is confirmed.",
+  "homeRecentActivity": "Recent Violations & Activity",
+  "homeViewAll": "View All",
+  "homeConfirmed": "Confirmed",
+  "homeUnderAiReview": "Under AI Review",
+  "homeNoFineYet": "No fine yet",
+  "homeVehicleOnFile": "Vehicle on file",
+  "homeDemoRecord": "Demo record",
+  "homeDemoReceipt": "Sample demo receipt",
+  "homePrototypeSimulation": "Prototype simulation",
+  "homeDemoPaid": "Demo paid"
 }

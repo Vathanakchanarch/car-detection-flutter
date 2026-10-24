@@ -493,6 +493,9 @@ class AppLocalizationsKm extends AppLocalizations {
       'Cambodia Smart Traffic · v1.0.0 (សាកល្បង)';
 
   @override
+  String get cambodiaSmartTraffic => 'ចរាចរណ៍ឆ្លាតវៃកម្ពុជា';
+
+  @override
   String get markAllRead => 'សម្គាល់ទាំងអស់ថាបានអាន';
 
   @override
@@ -840,4 +843,49 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get availableOnAndroid => 'អាចប្រើបានលើ Android';
+
+  @override
+  String get homeOutstandingConfirmedFines => 'ប្រាក់ពិន័យដែលបានបញ្ជាក់នៅសល់';
+
+  @override
+  String get homeLicencePointsUnavailable =>
+      'ព័ត៌មានបណ្ណបើកបរ · មិនទាន់មានពិន្ទុ';
+
+  @override
+  String get homeAiDetectionTitle =>
+      'ការរកឃើញដោយ AI និងប្រាក់ពិន័យដែលបានបញ្ជាក់';
+
+  @override
+  String get homeAiDetectionBody =>
+      'ការរកឃើញដែលកំពុងរង់ចាំត្រូវឱ្យមន្ត្រីពិនិត្យ មុននឹងអាចបញ្ជាក់ជាប្រាក់ពិន័យបាន។';
+
+  @override
+  String get homeRecentActivity => 'បទល្មើស និងសកម្មភាពថ្មីៗ';
+
+  @override
+  String get homeViewAll => 'មើលទាំងអស់';
+
+  @override
+  String get homeConfirmed => 'បានបញ្ជាក់';
+
+  @override
+  String get homeUnderAiReview => 'AI កំពុងពិនិត្យ';
+
+  @override
+  String get homeNoFineYet => 'មិនទាន់មានពិន័យ';
+
+  @override
+  String get homeVehicleOnFile => 'យានយន្តក្នុងគំរូ';
+
+  @override
+  String get homeDemoRecord => 'ទិន្នន័យគំរូ';
+
+  @override
+  String get homeDemoReceipt => 'បង្កាន់ដៃគំរូសាកល្បង';
+
+  @override
+  String get homePrototypeSimulation => 'ការសាកល្បងគំរូ';
+
+  @override
+  String get homeDemoPaid => 'បានបង់ក្នុងគំរូ';
 }

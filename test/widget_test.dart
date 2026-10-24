@@ -9,9 +9,13 @@ import 'package:car_detection/UI/verify_screen.dart';
 import 'package:car_detection/UI/violations_screen.dart';
 import 'package:car_detection/data/demo_data.dart';
 import 'package:car_detection/data/demo_store.dart';
+import 'package:car_detection/data/local/local_storage_service.dart';
+import 'package:car_detection/l10n/generated/app_localizations.dart';
 import 'package:car_detection/main.dart';
+import 'package:car_detection/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   setUp(demoStore.reset);
@@ -27,7 +31,12 @@ void main() {
   });
 
   testWidgets('onboarding Skip opens sign in', (tester) async {
-    await tester.pumpWidget(const SmartTrafficApp());
+    SharedPreferences.setMockInitialValues({});
+    final storage = await LocalStorageService.create();
+    await tester.pumpWidget(
+      SmartTrafficApp(storageFactory: () async => storage),
+    );
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
@@ -62,7 +71,7 @@ void main() {
     await tester.enterText(find.byType(TextField), '123456');
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pumpAndSettle();
-    expect(find.text('Recent alerts'), findsOneWidget);
+    expect(find.text('Recent Violations & Activity'), findsOneWidget);
   });
 
   testWidgets('main navigation switches tabs and Back returns Home', (
@@ -70,13 +79,13 @@ void main() {
   ) async {
     await tester.pumpWidget(const MaterialApp(home: AppShell()));
 
-    await tester.tap(find.byIcon(Icons.shield_outlined));
+    await tester.tap(find.byKey(const Key('main-tab-1')));
     await tester.pumpAndSettle();
     expect(find.text('Violations'), findsWidgets);
 
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
-    expect(find.text('Recent alerts'), findsOneWidget);
+    expect(find.text('Recent Violations & Activity'), findsOneWidget);
   });
 
   testWidgets('main tabs fit a narrow Android viewport', (tester) async {
@@ -84,16 +93,63 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(const MaterialApp(home: AppShell()));
 
-    for (final (name, icon) in [
-      ('Violations', Icons.shield_outlined),
-      ('Payments', Icons.account_balance_wallet_outlined),
-      ('Profile', Icons.person_outline),
-      ('Home', Icons.home_rounded),
+    for (final (name, index) in [
+      ('Violations', 1),
+      ('Payments', 2),
+      ('Profile', 3),
+      ('Home', 0),
     ]) {
-      await tester.tap(find.byIcon(icon));
+      await tester.tap(find.byKey(Key('main-tab-$index')));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: 'after selecting $name');
     }
+  });
+
+  for (final width in [320.0, 390.0, 393.0]) {
+    for (final locale in ['en', 'km']) {
+      for (final dark in [false, true]) {
+        testWidgets(
+          'Stitch Home fits $width $locale ${dark ? 'dark' : 'light'}',
+          (tester) async {
+            await tester.binding.setSurfaceSize(Size(width, 844));
+            addTearDown(() => tester.binding.setSurfaceSize(null));
+            await tester.pumpWidget(
+              MaterialApp(
+                locale: Locale(locale),
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                theme: buildLightTheme(),
+                darkTheme: buildDarkTheme(),
+                themeMode: dark ? ThemeMode.dark : ThemeMode.light,
+                home: const AppShell(),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            expect(find.text('180,000 ៛'), findsOneWidget);
+            expect(find.byKey(const Key('main-tab-0')), findsOneWidget);
+            await tester.ensureVisible(
+              find.text(
+                locale == 'km'
+                    ? 'ការរកឃើញដោយ AI និងប្រាក់ពិន័យដែលបានបញ្ជាក់'
+                    : 'AI Detection vs Confirmed Fine',
+              ),
+            );
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+  }
+
+  testWidgets('Home fine total follows paid demo state', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: AppShell()));
+    expect(find.text('180,000 ៛'), findsOneWidget);
+
+    demoStore.payFines(['helmet']);
+    await tester.pump();
+    expect(find.text('150,000 ៛'), findsOneWidget);
+    expect(find.text('No fine yet'), findsOneWidget);
   });
 
   testWidgets('profile language opens the Figma-style sheet', (tester) async {

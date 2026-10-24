@@ -9,7 +9,6 @@ import 'home_screen.dart';
 import 'payments_screen.dart';
 import 'profile_screen.dart';
 import 'violations_screen.dart';
-import 'widgets/app_components.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -61,28 +60,50 @@ class _AppShellState extends State<AppShell> {
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 390),
               child: Container(
-                margin: EdgeInsets.fromLTRB(16, 6, 16, 16),
-                padding: EdgeInsets.all(6),
+                margin: const EdgeInsets.fromLTRB(24, 6, 24, 16),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
                 decoration: BoxDecoration(
                   color: aicaSurface(context),
-                  border: Border.all(color: aicaBorder(context)),
-                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: isDark(context)
+                        ? aicaBorder(context)
+                        : const Color(0xFFF1F5F9),
+                  ),
+                  borderRadius: BorderRadius.circular(100),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha: isDark(context) ? .22 : .12,
+                      ),
+                      blurRadius: 30,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: List.generate(4, (index) {
                     final selected = _tab == index;
                     return Expanded(
-                      flex: selected ? 17 : 10,
                       child: InkWell(
+                        key: Key('main-tab-$index'),
                         onTap: () => setState(() => _tab = index),
-                        borderRadius: BorderRadius.circular(22),
+                        borderRadius: BorderRadius.circular(100),
                         child: Container(
-                          height: 52,
+                          height:
+                              Localizations.localeOf(context).languageCode ==
+                                  'km'
+                              ? 64
+                              : 56,
                           decoration: BoxDecoration(
-                            color: selected ? ink : Colors.transparent,
-                            borderRadius: BorderRadius.circular(22),
+                            color: selected
+                                ? (isDark(context)
+                                      ? const Color(0xFF203554)
+                                      : const Color(0xFFEFF6FF))
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(100),
                           ),
-                          child: Row(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Stack(
@@ -90,9 +111,11 @@ class _AppShellState extends State<AppShell> {
                                 children: [
                                   Icon(
                                     icons[index],
-                                    size: 23,
+                                    size: 20,
                                     color: selected
-                                        ? Colors.white
+                                        ? (isDark(context)
+                                              ? aicaBlue(context)
+                                              : const Color(0xFF155DFC))
                                         : aicaMuted(context),
                                   ),
                                   if (index == 1 &&
@@ -119,24 +142,27 @@ class _AppShellState extends State<AppShell> {
                                     ),
                                 ],
                               ),
-                              if (selected) ...[
-                                SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    labels[index],
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily: aicaFontFamily,
-                                      fontFamilyFallback: khmerFontFallback,
-                                      color: Colors.white,
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
+                              const SizedBox(height: 3),
+                              Text(
+                                labels[index],
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontFamilyFallback: khmerFontFallback,
+                                  color: selected
+                                      ? (isDark(context)
+                                            ? aicaBlue(context)
+                                            : const Color(0xFF155DFC))
+                                      : aicaMuted(context),
+                                  fontSize: 9,
+                                  height: 1.1,
+                                  fontWeight: selected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
                                 ),
-                              ],
+                              ),
                             ],
                           ),
                         ),
